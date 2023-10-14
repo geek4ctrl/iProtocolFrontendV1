@@ -1,95 +1,68 @@
-'use client'
+"use client"
 
-import { useStore } from "@/src/store";
+import { useStore } from '@/src/store';
+import 'react-toastify/dist/ReactToastify.css';
+import AuthenticatedUserReservationButtonComponent from './AuthenticatedUserReservationButtonComponent';
 import supabase from './SupabaseClient';
-import AuthenticatedUserEventsReservationComponent from './AuthenticatedUserEventsReservationComponent';
 
-interface Event {
-    title: string;
-    author: string;
-    place: string;
-    eventpicture: string;
-    // Add more properties as needed
-}
+// publicSupabaseUrl={publicSupabaseUrl} publicSupabaseAnonKey={publicSupabaseAnonKey} 
 
-interface AuthenticatedUserEventsProps {
-    allEvents: Event[];
-    user: any; // Replace 'any' with the appropriate user type
-    userInformation: any; // Replace 'any' with the appropriate userInformation type
-    publicSupabaseUrl: any; // Replace 'any' with the appropriate type
-    publicSupabaseAnonKey: any; // Replace 'any' with the appropriate type
-}
+const members = [
+    {
+        avatar: "https://api.uifaces.co/our-content/donated/xZ4wg2Xj.jpg",
+        name: "John lorin",
+        email: "john@example.com"
+    }, {
+        avatar: "https://randomuser.me/api/portraits/men/86.jpg",
+        name: "Chris bondi",
+        email: "chridbondi@example.com"
+    }, {
+        avatar: "https://images.unsplash.com/photo-1464863979621-258859e62245?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ",
+        name: "yasmine",
+        email: "yasmine@example.com"
+    }, {
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=a72ca28288878f8404a795f39642a46f",
+        name: "Joseph",
+        email: "joseph@example.com"
+    },
+];
 
-export default function AuthenticatedUserEvents({ allEvents, user, userInformation, publicSupabaseUrl, publicSupabaseAnonKey }: AuthenticatedUserEventsProps) {
+export default function AuthenticatedUserReservationsComponent({ allReservations, user, publicSupabaseUrl, publicSupabaseAnonKey }: { allReservations: any, user: any, publicSupabaseUrl: any, publicSupabaseAnonKey: any }) {
 
-    const allEventsToDisplayHere = useStore((state) => state.event) ? useStore((state) => state.event) : allEvents;
-    const chosenReservationType = useStore((state) => state.chosenReservationType);
+    const allReservationsToDisplayHere = useStore((state) => state.reservation) ? useStore((state) => state.reservation) : allReservations;
 
-    const loggedInUserEmail = user.email;
-
-    const handleReserveClick = async (event: any) => {
-
-        const objectDataToSend = {
-            userid: loggedInUserEmail,
-            userfirstname: userInformation?.data[0]?.firstname,
-            userlastname: userInformation?.data[0]?.surname,
-            userpicture: "https://res.cloudinary.com/dhqvb8wbn/image/upload/v1658596949/iprotoco…",
-            eventtitle: event.title,
-            eventauthor: event.author,
-            eventdate: event.date,
-            eventplace: event.place,
-            programtime: event?.programme[0]?.time,
-            programtitle: event?.programme[0]?.title,
-            programpicture: event?.programme[0]?.picture,
-            status: false,
-            invitationstatus: "pending",
-            reservationtype: chosenReservationType
-        }
-
-        const { error } = await supabase
-            .from('event_reservations')
-            .insert(objectDataToSend)
-
-        if (error) {
-            if (error.code === "23505") {
-                // errorToDisplay = error.message;
-                // console.log(error?.message);
-            }
-        } else {
-            // location.reload();
-        }
-
-    }
-
+    console.log('Damn 1! ', allReservationsToDisplayHere)
 
     return (
         <section className="py-28">
             <div className="max-w-screen-lg mx-auto px-4 md:px-8">
                 <div className="max-w-md">
-                    <h1 className="text-gray-800 text-2xl font-extrabold sm:text-4xl">All Events</h1>
-                    <p className="text-gray-600 mt-2">We're currently looking at different events to help shape your faith and life.</p>
+                    <h1 className="text-gray-800 text-2xl font-extrabold sm:text-4xl">All Reservations</h1>
+                    <p className="text-gray-600 mt-2">We're currently looking at different reservations.</p>
                 </div>
                 <ul className="mt-12 divide-y space-y-3">
                     {
-                        allEventsToDisplayHere?.map((item: any, idx: any) => (
+                        allReservationsToDisplayHere?.map((item: any, idx: any) => (
                             <li key={idx} className="px-4 py-5 duration-150 hover:border-white hover:rounded-xl hover:bg-gray-50" style={{ border: "0.5px solid #80808030", borderRadius: "0.5rem", color: "black" }}>
                                 <a className="space-y-3">
                                     <div className="flex items-center gap-x-6">
                                         <img
-                                            src={item.eventpicture}
-                                            width={120}
-                                            height={50}
+                                            src={item.userpicture}
+                                            width={100}
+                                            height={75}
                                             alt="Float UI logo"
                                             className="bg-white w-14 h-14 border rounded-full flex items-center justify-center"
+                                            style={{ borderRadius: "50%" }}
                                         />
                                         <div>
-                                            <span className="block text-sm text-indigo-600 font-medium">{item.place}</span>
-                                            <h3 className="text-base text-gray-800 font-semibold mt-1">{item.author}</h3>
+                                            <span className="block text-sm text-indigo-600 font-medium">{item.eventdate}</span>
+                                            <h3 className="text-base text-gray-800 font-semibold mt-1">{item.eventplace}</h3>
                                         </div>
                                     </div>
                                     <p className="text-gray-600 sm:text-sm" style={{ padding: "0.5rem" }}>
                                         {item.title}
                                     </p>
+
                                     <div className="text-sm text-gray-600 flex items-center gap-6">
                                         <span className="flex items-center gap-2">
                                             <svg className="w-5 h-5 text-gray-500" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -105,7 +78,7 @@ export default function AuthenticatedUserEvents({ allEvents, user, userInformati
 
                                             {item.place}
                                         </span>
-                                        <AuthenticatedUserEventsReservationComponent item={item} user={user} userInformation={userInformation} chosenReservationType={chosenReservationType} />
+                                        <AuthenticatedUserReservationButtonComponent item={item} user={user} />
                                     </div>
                                 </a>
                             </li>
@@ -115,5 +88,4 @@ export default function AuthenticatedUserEvents({ allEvents, user, userInformati
             </div>
         </section>
     )
-
 }
