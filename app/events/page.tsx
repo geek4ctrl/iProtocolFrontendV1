@@ -69,8 +69,6 @@ export default async function Index() {
     const events = await supabase.from("events").select();
     const allEvents: any = events.data;
 
-    console.log('Show me all the events: ', events);
-
     // Fetching Goma place
     const gomaPlaces = await supabase.from('place_in_goma_view').select();
     const allGomaPlaces = gomaPlaces.data ?? [];

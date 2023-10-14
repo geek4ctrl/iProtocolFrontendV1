@@ -75,9 +75,6 @@ export default function AuthenticatedUserEvents({ allEvents, user, userInformati
                             <li key={idx} className="px-4 py-5 duration-150 hover:border-white hover:rounded-xl hover:bg-gray-50" style={{ border: "0.5px solid #80808030", borderRadius: "0.5rem", color: "black" }}>
                                 <a className="space-y-3">
                                     <div className="flex items-center gap-x-6">
-                                        {/* <div className="bg-white w-14 h-14 border rounded-full flex items-center justify-center">
-                                                    {item.eventpicture}
-                                                </div> */}
                                         <img
                                             src={item.eventpicture}
                                             width={120}
