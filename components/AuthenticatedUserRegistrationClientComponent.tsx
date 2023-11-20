@@ -3,6 +3,8 @@
 import { useState } from "react";
 import supabase from "./SupabaseClient";
 
+import { v4 as uuidv4 } from 'uuid';
+
 interface UserTitle {
     value: string;
     // Add more properties as needed
@@ -27,6 +29,17 @@ interface AuthenticatedUserRegistrationClientComponentProps {
 }
 
 export default function AuthenticatedUserRegistrationClientComponent({ userTitle, userDesignation, user, publicSupabaseUrl, publicSupabaseAnonKey }: { userTitle: any, userDesignation: any, user: any, publicSupabaseUrl: any, publicSupabaseAnonKey: any }) {
+
+    const [userId, setUserId] = useState(user.id);
+    const [media, setMedia] = useState([]);
+
+    const [picture, setPicture] = useState(false);
+    const [document, setDocument] = useState(false);
+
+    const [enabled, setEnabled] = useState(false);
+
+    // console.log('Show me the user: ', user);
+    // setUserId(user.id);
 
     let [errorToDisplay, setErrorToDisplay] = useState<any>()
 
@@ -71,6 +84,90 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
         }
 
     }
+
+    // Upload picture
+    async function uploadPicture(e) {
+        let file = e.target.files[0];
+
+        const { data, error } = await supabase
+            .storage
+            .from('iprotocol')
+            .upload(userId + "/" + "picture", file as File)
+
+        if (data) {
+            getMediaPicture();
+            setPicture(true);
+
+            if (picture == true && document == true) {
+                setEnabled(true);
+            }
+        } else {
+            console.log(error);
+            setPicture(false);
+        }
+    }
+
+    async function getMediaPicture() {
+
+        const { data, error } = await supabase.storage.from('iprotocol').list("picture" + '/', {
+            limit: 10,
+            offset: 0,
+            sortBy: {
+                column: 'name', order:
+                    'asc'
+            }
+        });
+
+        if (data) {
+            console.log('Working');
+            // setMedia(data);
+        } else {
+            console.log(71, error);
+        }
+    }
+
+    // Upload documents
+    async function uploadDocument(e) {
+        let file = e.target.files[0];
+
+        const { data, error } = await supabase
+            .storage
+            .from('iprotocol')
+            .upload(userId + "/" + "document", file as File)
+
+        if (data) {
+            getDocumentMedia();
+            setDocument(true);
+
+
+            if (picture == true && document == true) {
+                setEnabled(true);
+            }
+        } else {
+            console.log(error);
+            setDocument(false);
+        }
+    }
+
+    async function getDocumentMedia() {
+
+        const { data, error } = await supabase.storage.from('iprotocol').list("document" + '/', {
+            limit: 10,
+            offset: 0,
+            sortBy: {
+                column: 'name', order:
+                    'asc'
+            }
+        });
+
+        if (data) {
+            console.log('Working')
+            // setMedia(data);
+        } else {
+            console.log(71, error);
+        }
+    }
+
 
     return (
         <form
@@ -132,21 +229,51 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
                 })}
             </select>
 
-            <input
-                className="rounded-md px-4 py-2 bg-inherit border mb-6"
-                type="text"
-                name="uploadpicture"
-                placeholder="Upload a picture"
-                required
-            />
+            <label className="cursor-pointer text-center p-4 md:p-8">
+                <p className="mt-3 text-gray-700 max-w-xs mx-auto">Click to <span className="font-medium text-indigo-600">Upload a picture</span> or drag and drop your file here</p>
+            </label>
 
             <input
                 className="rounded-md px-4 py-2 bg-inherit border mb-6"
-                type="text"
-                name="uploaddocument"
-                placeholder="Upload documents"
+                type="file"
+                name="uploadpicture"
+                placeholder="Upload a picture"
+                onChange={(e) => uploadPicture(e)}
                 required
             />
+
+            {
+                media.map((media) => {
+                    return (
+                        <>
+                            <img src={`https://mnjnkqyurgbrgflwcugc.supabase.co/storage/v1/object/public/iprotocol/${user.id}/picture`} alt="" />
+                        </>
+                    )
+                })
+            }
+
+            <label className="cursor-pointer text-center p-4 md:p-8">
+                <p className="mt-3 text-gray-700 max-w-xs mx-auto">Click to <span className="font-medium text-indigo-600">Upload documents</span> or drag and drop your file here</p>
+            </label>
+
+            <input
+                className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                type="file"
+                name="uploaddocument"
+                placeholder="Upload documents"
+                onChange={(e) => uploadDocument(e)}
+                required
+            />
+
+            {
+                media.map((media) => {
+                    return (
+                        <>
+                            <img src={`https://mnjnkqyurgbrgflwcugc.supabase.co/storage/v1/object/public/iprotocol/${user.id}/document`} alt="" />
+                        </>
+                    )
+                })
+            }
 
             <button className="bg-green-700 rounded px-4 py-2 text-white mb-2">
                 Clear
