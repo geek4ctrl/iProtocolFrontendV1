@@ -86,7 +86,7 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
     }
 
     // Upload picture
-    async function uploadPicture(e) {
+    async function uploadPicture(e: any) {
         let file = e.target.files[0];
 
         const { data, error } = await supabase
@@ -127,7 +127,7 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
     }
 
     // Upload documents
-    async function uploadDocument(e) {
+    async function uploadDocument(e: any) {
         let file = e.target.files[0];
 
         const { data, error } = await supabase
