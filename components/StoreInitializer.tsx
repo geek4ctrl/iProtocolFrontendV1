@@ -7,13 +7,14 @@ interface StoreInitializerProps {
     name: string;
     place: any[];
     event: any[];
+    reservation: any[];
 }
 
-function StoreInitializer({ name, place, event }: StoreInitializerProps) {
+function StoreInitializer({ name, place, event, reservation }: StoreInitializerProps) {
 
     const iniitialized = useRef(false);
     if (!iniitialized.current) {
-        useStore.setState({ name, place, event });
+        useStore.setState({ name, place, event, reservation });
         iniitialized.current = true;
     }
 

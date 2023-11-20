@@ -129,16 +129,6 @@ export async function POST(request: Request) {
 
   const supabase = createRouteHandlerClient({ cookies })
 
-  console.log('Show me the form object: ', {
-    title,
-    firstname,
-    surname,
-    postname,
-    category,
-    diocese,
-    uploadpicture,
-    uploaddocument,
-  })
 }
 
 interface Title {
@@ -228,9 +218,19 @@ export default async function Index() {
     .select("*")
     .eq('email', `${user?.email}`)
 
+  // Fetching all reservations
+  const reservations = await supabase.from("event_reservations").select("*").eq('userid', `${user?.email}`);
+  const allReservations = reservations.data ?? [];
+
+  if (allReservations !== undefined && allReservations?.length > 1) {
+    useStore.setState({ reservation: allReservations });
+  }
+
+  const allReservationsToDisplay = useStore.getState().reservation;
+
   return (
     <>
-      <StoreInitializer name={"Laurent"} place={allPlaces} event={allEventsToDisplay} />
+      <StoreInitializer name={"Laurent"} place={allPlaces} event={allEventsToDisplay} reservation={allReservationsToDisplay} />
 
       <div className="w-full flex flex-col items-center">
         <NavigationBar navigation={navigation} user={user} />
