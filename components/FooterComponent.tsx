@@ -10,11 +10,11 @@ interface FooterComponentProps {
 
 export default function FooterComponent({ footerNavs }: { footerNavs: any }) {
     return (
-        <footer className="text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 px-4 py-5 max-w-screen-xl mx-auto md:px-8 mt-4 border-t border-gray-200 dark:border-gray-700" style={{ width: "-webkit-fill-available", marginTop: "2rem" }}>
-            <div className="max-w-lg sm:mx-auto sm:text-center">
+        <footer className="text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 px-4 py-5 max-w-full mx-auto md:px-8 mt-4 border-t border-gray-200 dark:border-gray-700" style={{ width: "100vw", marginTop: "2rem" }}>
+            <div className="sm:mx-auto sm:text-center">
                 <img src="https://res.cloudinary.com/dhqvb8wbn/image/upload/v1653855971/iProtocol_icone_i1wzgx.png" className="w-32 sm:mx-auto" alt="iProtocol Logo" />
                 <p className="leading-relaxed mt-2 text-base text-gray-800 dark:text-gray-200">
-                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                    iProtocol empowers communities and organizations to manage events, registrations, and reservations with ease. Join us in building a more connected and organized future.
                 </p>
             </div>
             <ul className="items-center justify-center mt-8 space-y-5 sm:flex sm:space-x-4 sm:space-y-0">

@@ -65,27 +65,29 @@ export function NavigationClientComponent({ allGomaPlaces, allKinshasaPlaces }: 
                 </div>
 
                 <div className="mt-4 flex gap-2 justify-center flex-wrap" style={{ cursor: "pointer" }}>
-                    <button 
-                        onClick={showAllEvents}
-                        className={`inline-block py-2 px-4 text-white font-medium duration-150 rounded-lg shadow-md hover:shadow-none ${
-                            selectedPlace === null ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-600 hover:bg-gray-700'
-                        }`}
-                    >
-                        All Events
-                    </button>
-                    {
-                        allPlaces?.map((items: any, key: any) => (
-                            <button 
-                                key={key}
-                                onClick={() => choosePlace(items.place)}
-                                className={`inline-block py-2 px-4 text-white font-medium duration-150 rounded-lg shadow-md hover:shadow-none ${
-                                    selectedPlace === items.place ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-800 hover:bg-gray-700'
-                                }`}
-                            >
-                                {items.place}
-                            </button>
-                        ))
-                    }
+                    <div className="flex flex-col w-full gap-3 sm:flex-row sm:gap-2 sm:justify-center">
+                        <button 
+                            onClick={showAllEvents}
+                            className={`w-full sm:w-auto py-3 px-4 text-white font-medium duration-150 rounded-lg shadow-md hover:shadow-none focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
+                                selectedPlace === null ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-600 hover:bg-gray-700'
+                            }`}
+                        >
+                            All Events
+                        </button>
+                        {
+                            allPlaces?.map((items: any) => (
+                                <button 
+                                    key={items.place}
+                                    onClick={() => choosePlace(items.place)}
+                                    className={`w-full sm:w-auto py-3 px-4 text-white font-medium duration-150 rounded-lg shadow-md hover:shadow-none focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
+                                        selectedPlace === items.place ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-800 hover:bg-gray-700'
+                                    }`}
+                                >
+                                    {items.place}
+                                </button>
+                            ))
+                        }
+                    </div>
                 </div>
 
             </div>
