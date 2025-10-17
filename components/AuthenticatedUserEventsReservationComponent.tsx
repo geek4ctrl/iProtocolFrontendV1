@@ -65,8 +65,6 @@ export default function AuthenticatedUserEventsReservationComponent({ item, user
 
             if (error) {
                 if (error.code === "23505") {
-                    // errorToDisplay = error.message;
-                    console.log(error?.message);
                     failedNotification(error.message);
                 }
             } else {

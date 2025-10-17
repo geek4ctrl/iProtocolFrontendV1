@@ -1,3 +1,18 @@
+# IProtocol CENCO V1
+
+## 🌓 New Feature: Dark/Light Theme Toggle!
+
+This application now features a complete dark/light theme system! Click the sun/moon icon in the navigation bar to switch between themes.
+
+**[📚 Complete Theme Documentation →](./THEME_INDEX.md)**
+
+### Quick Start
+- 🌙 Click the moon icon for dark mode
+- ☀️ Click the sun icon for light mode  
+- Your preference is automatically saved!
+
+---
+
 # Supabase Starter
 
 This starter configures Supabase Auth to use cookies, making the user's session available throughout the entire Next.js app - Client Components, Server Components, Route Handlers, Server Actions and Middleware.

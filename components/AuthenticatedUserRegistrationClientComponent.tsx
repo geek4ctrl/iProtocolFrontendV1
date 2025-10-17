@@ -38,9 +38,6 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
 
     const [enabled, setEnabled] = useState(false);
 
-    // console.log('Show me the user: ', user);
-    // setUserId(user.id);
-
     let [errorToDisplay, setErrorToDisplay] = useState<any>()
 
     async function onSubmit(event: any) {
@@ -102,7 +99,6 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
                 setEnabled(true);
             }
         } else {
-            console.log(error);
             setPicture(false);
         }
     }
@@ -119,10 +115,9 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
         });
 
         if (data) {
-            console.log('Working');
-            // setMedia(data);
+            // Media fetched successfully
         } else {
-            console.log(71, error);
+            // Handle error silently or log to error tracking service
         }
     }
 
@@ -144,7 +139,6 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
                 setEnabled(true);
             }
         } else {
-            console.log(error);
             setDocument(false);
         }
     }
@@ -161,10 +155,9 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
         });
 
         if (data) {
-            console.log('Working')
-            // setMedia(data);
+            // Media fetched successfully
         } else {
-            console.log(71, error);
+            // Handle error silently or log to error tracking service
         }
     }
 

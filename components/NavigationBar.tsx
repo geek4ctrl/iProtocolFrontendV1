@@ -1,26 +1,18 @@
+import type { NavigationItem, SupabaseUser } from "@/types";
 import Link from "next/link"
 import LogoutButton from "./LogoutButton"
 import NavigationBarLanguagesClientComponent from "./NavigationBarLanguagesClientComponent"
-
-interface NavigationItem {
-    // Define the structure of a navigation item as needed
-    name: string;
-    href: string;
-    // Add more properties as needed
-}
+import ThemeToggle from "./ThemeToggle"
 
 interface NavigationBarProps {
     navigation: NavigationItem[];
-    user: {
-        email: string;
-        // Add more user properties as needed
-    } | null;
+    user: SupabaseUser | null;
 }
 
-export default function NavigationBar({ navigation, user }: { navigation: any, user: any }) {
+export default function NavigationBar({ navigation, user }: NavigationBarProps) {
 
     return (
-        <nav className="bg-white border-b w-full md:static md:text-sm md:border-none">
+        <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 w-full md:static md:text-sm transition-colors">
             <div className="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
                 <div className="flex items-center justify-between py-3 md:py-5 md:block">
                     <a href="/">
@@ -33,7 +25,7 @@ export default function NavigationBar({ navigation, user }: { navigation: any, u
                     </a>
                     <div className="md:hidden">
 
-                        <button className="text-gray-500 hover:text-gray-800"
+                        <button className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
                         >
                             {
                                 (
@@ -49,27 +41,26 @@ export default function NavigationBar({ navigation, user }: { navigation: any, u
                 <div className={`flex-1 pb-3 mt-8 md:block md:pb-0 md:mt-0 ${'block'}`}>
                     <ul className="justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0">
                         {
-                            navigation.map((item: any, idx: any) => {
-                                return (
-                                    <NavigationBarLanguagesClientComponent item={item} idx={idx} />
-                                )
-                            })
+                            navigation.map((item, idx) => (
+                                <NavigationBarLanguagesClientComponent key={idx} item={item} idx={idx} />
+                            ))
                         }
-                        <span className='hidden w-px h-6 bg-gray-300 md:block'></span>
+                        <span className='hidden w-px h-6 bg-gray-300 dark:bg-gray-600 md:block'></span>
                         <div className='space-y-3 items-center gap-x-6 md:flex md:space-y-0'>
+                            <ThemeToggle />
 
                             {user ? (
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-4 text-gray-900 dark:text-gray-100 font-medium">
                                     Hey, {user.email}!
                                     <LogoutButton />
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-4">
-                                    <Link href="/login" className="block py-3 text-center text-gray-700 hover:text-indigo-600 border rounded-lg md:border-none">
+                                    <Link href="/login" className="block py-3 text-center text-gray-800 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium border border-gray-300 dark:border-gray-600 rounded-lg md:border-none">
                                         Log in
                                     </Link>
 
-                                    <Link href="/login" className="block py-3 px-4 font-medium text-center text-white bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 active:shadow-none rounded-lg shadow md:inline">
+                                    <Link href="/login" className="block py-3 px-4 font-semibold text-center text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 active:shadow-none rounded-lg shadow-md md:inline">
                                         Sign in
                                     </Link>
                                 </div>

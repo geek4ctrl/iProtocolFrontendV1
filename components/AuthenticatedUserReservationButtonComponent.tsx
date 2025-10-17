@@ -8,8 +8,6 @@ export default function AuthenticatedUserReservationButtonComponent({ item, user
 
     const handleReserveClick = async (event: any) => {
 
-        console.log('Show me the id of the item: ', item);
-
         try {
             const { error } = await supabase
                 .from('event_reservations')

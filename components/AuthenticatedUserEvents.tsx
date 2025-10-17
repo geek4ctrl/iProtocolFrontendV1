@@ -52,8 +52,7 @@ export default function AuthenticatedUserEvents({ allEvents, user, userInformati
 
         if (error) {
             if (error.code === "23505") {
-                // errorToDisplay = error.message;
-                // console.log(error?.message);
+                // Duplicate reservation - handle silently or show user notification
             }
         } else {
             // location.reload();

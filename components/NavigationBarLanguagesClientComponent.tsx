@@ -19,11 +19,15 @@ export default function NavigationBarLanguagesClientComponent({ item, idx }: { i
     const notify = () => toast("Internationalization hasn't been applied");
 
     return (
-        <li key={idx} className="text-gray-700 hover:text-indigo-600" onClick={notify}>
-            <ToastContainer />
-            <a href="javascript:void(0)" className="block">
+        <li key={idx} className="text-gray-800 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400">
+            <ToastContainer theme="colored" />
+            <button 
+                onClick={notify}
+                className="block cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors"
+                type="button"
+            >
                 {item.title}
-            </a>
+            </button>
         </li>
     )
 }

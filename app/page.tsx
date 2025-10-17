@@ -1,7 +1,6 @@
-import { createRouteHandlerClient, createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
-
-import { useStore } from '@/src/store';
+import type { NavigationItem, FooterNavItem, Title, Designation, Plan, Place, Event, Reservation, User } from '@/types'
 import StoreInitializer from '@/components/StoreInitializer';
 import FooterComponent from '@/components/FooterComponent';
 import UnauthenticatedUser from '@/components/UnauthenticatedUser';
@@ -14,71 +13,20 @@ export const dynamic = 'force-dynamic'
 const publicSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publicSupabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-const navigation = [
-  { title: "Francais", path: "javascript:void(0)" },
-  { title: "English", path: "javascript:void(0)" },
-  { title: "Italien", path: "javascript:void(0)" },
+const navigation: NavigationItem[] = [
+  { title: "Français", path: "#" },
+  { title: "English", path: "#" },
+  { title: "Italiano", path: "#" },
 ];
 
-const posts = [
-  {
-    title: "Saturday July 2, 2022",
-    desc: "Going into this journey, I had a standard therapy regimen, based on looking at the research literature. After I saw the movie, I started to ask other people what they did for their anxiety, and some",
-    img: "https://images.unsplash.com/photo-1556155092-490a1ba16284?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-    authorLogo: "https://api.uifaces.co/our-content/donated/xZ4wg2Xj.jpg",
-    authorName: "Abbé Ken",
-    date: "Jan 4 2022",
-    href: "javascript:void(0)"
-  },
-  {
-    title: "Sunday July 3, 2022",
-    desc: "According to him, â€œI'm still surprised that this has happened. But we are surprised because we are so surprised.â€More revelations about Whittington will be featured in the film",
-    img: "https://images.unsplash.com/photo-1620287341056-49a2f1ab2fdc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-    authorLogo: "https://api.uifaces.co/our-content/donated/FJkauyEa.jpg",
-    authorName: "Abbé Pierrot",
-    date: "Jan 4 2022",
-    href: "javascript:void(0)"
-  },
-  {
-    title: "Tuesday July 5, 2022",
-    desc: "I hope I remembered all the stuff that they needed to know. They're like, 'okay,' and write it in their little reading notebooks. I realized today that I have all this stuff that",
-    img: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-    authorLogo: "https://randomuser.me/api/portraits/men/46.jpg",
-    authorName: "Abbé Justin",
-    date: "Jan 4 2022",
-    href: "javascript:void(0)"
-  },
+const footerNavs: FooterNavItem[] = [
+  { href: '/about', name: 'About' },
+  { href: '/events', name: 'Events' },
+  { href: '/contact', name: 'Contact' },
+  { href: '/support', name: 'Support' }
 ];
 
-const footerNavs = [
-  {
-    href: 'javascript:void()',
-    name: 'About'
-  },
-  {
-    href: 'javascript:void()',
-    name: 'Blog'
-  },
-  {
-    href: 'javascript:void()',
-    name: ''
-  },
-  {
-    href: 'javascript:void()',
-    name: 'Team'
-  },
-  {
-    href: 'javascript:void()',
-    name: 'Careers'
-  },
-
-  {
-    href: 'javascript:void()',
-    name: 'Support'
-  }
-];
-
-const plans: any = [
+const plans: Plan[] = [
   {
     name: "Invitation",
     price: 12,
@@ -91,7 +39,6 @@ const plans: any = [
       "Petition",
       "Proposition",
       "Encouragement",
-
     ],
   },
   {
@@ -111,142 +58,150 @@ const plans: any = [
 ];
 
 
-// Added recently
-
-export async function POST(request: Request) {
-  const requestUrl = new URL(request.url)
-  const formData = await request.formData()
-
-  const title = String(formData.get('title'))
-  const firstname = String(formData.get('firstname'))
-  const surname = String(formData.get('surname'))
-  const postname = String(formData.get('postname'))
-  const email = String(formData.get('email'))
-  const category = String(formData.get('category'))
-  const diocese = String(formData.get('diocese'))
-  const uploadpicture = String(formData.get('uploadpicture'))
-  const uploaddocument = String(formData.get('uploaddocument'))
-
-  const supabase = createRouteHandlerClient({ cookies })
-
-}
-
-interface Title {
-  value: string;
-  viewValue: string;
-}
-
-interface Designation {
-  value: string;
-  viewValue: string;
-}
+// User title options for ecclesiastical hierarchy
 
 const userTitle: Title[] = [
-  { value: 'cardinal', viewValue: 'Steak' },
-  { value: 'monseigneur', viewValue: 'Pizza' },
-  { value: 'excellence', viewValue: 'Tacos' },
-  { value: 'honorable', viewValue: 'Pizza' },
-  { value: 'abbe', viewValue: 'Tacos' },
-  { value: 'pere', viewValue: 'Pizza' },
-  { value: 'soeur', viewValue: 'Tacos' },
-  { value: 'frere', viewValue: 'Pizza' },
-  { value: 'mr', viewValue: 'Tacos' },
-  { value: 'mme', viewValue: 'Pizza' },
-  { value: 'mlle', viewValue: 'Tacos' },
+  { value: 'cardinal', viewValue: 'Cardinal' },
+  { value: 'monseigneur', viewValue: 'Monseigneur' },
+  { value: 'excellence', viewValue: 'Excellence' },
+  { value: 'honorable', viewValue: 'Honorable' },
+  { value: 'abbe', viewValue: 'Abbé' },
+  { value: 'pere', viewValue: 'Père' },
+  { value: 'soeur', viewValue: 'Sœur' },
+  { value: 'frere', viewValue: 'Frère' },
+  { value: 'mr', viewValue: 'Mr.' },
+  { value: 'mme', viewValue: 'Mme.' },
+  { value: 'mlle', viewValue: 'Mlle.' },
 ];
 
 const userDesignation: Designation[] = [
-  { value: 'corpsMedical', viewValue: 'Steak' },
-  { value: 'agentPresse', viewValue: 'Pizza' },
-  { value: 'securite', viewValue: 'Tacos' },
-  { value: 'officielGouvernementC1', viewValue: 'Pizza' },
-  { value: 'officielGouvernementC2', viewValue: 'Tacos' },
-  { value: 'officielGouvernementC3', viewValue: 'Tacos' },
-  { value: 'officielEcclesialC1', viewValue: 'Pizza' },
-  { value: 'officielEcclesialC2', viewValue: 'Tacos' },
-  { value: 'liturgieConcelebrant', viewValue: 'Pizza' },
-  { value: 'liturgieC1', viewValue: 'Pizza' },
-  { value: 'liturgieC2', viewValue: 'Pizza' },
-  { value: 'personnesAssistees', viewValue: 'Pizza' },
-  { value: 'religieux', viewValue: 'Tacos' },
-  { value: 'staff', viewValue: 'Pizza' },
-  { value: 'protocol', viewValue: 'Pizza' },
+  { value: 'corpsMedical', viewValue: 'Corps Médical' },
+  { value: 'agentPresse', viewValue: 'Agent de Presse' },
+  { value: 'securite', viewValue: 'Sécurité' },
+  { value: 'officielGouvernementC1', viewValue: 'Officiel Gouvernement C1' },
+  { value: 'officielGouvernementC2', viewValue: 'Officiel Gouvernement C2' },
+  { value: 'officielGouvernementC3', viewValue: 'Officiel Gouvernement C3' },
+  { value: 'officielEcclesialC1', viewValue: 'Officiel Ecclésial C1' },
+  { value: 'officielEcclesialC2', viewValue: 'Officiel Ecclésial C2' },
+  { value: 'liturgieConcelebrant', viewValue: 'Liturgie Concélébrant' },
+  { value: 'liturgieC1', viewValue: 'Liturgie C1' },
+  { value: 'liturgieC2', viewValue: 'Liturgie C2' },
+  { value: 'personnesAssistees', viewValue: 'Personnes Assistées' },
+  { value: 'religieux', viewValue: 'Religieux' },
+  { value: 'staff', viewValue: 'Staff' },
+  { value: 'protocol', viewValue: 'Protocol' },
 ];
 
 export default async function Index() {
   const supabase = createServerComponentClient({ cookies })
 
+  // Fetch authenticated user
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-
-  // Fetching all places
-  const places = await supabase.from('getplaces').select();
-  const allPlaces = places.data ?? [];
-
-  if (allPlaces !== undefined && allPlaces?.length > 1) {
-
-    useStore.setState({ name: "Laurent" });
-    useStore.setState({ place: allPlaces });
-
+  // Fetch all places with error handling - try view first, then table
+  let { data: allPlaces, error: placesError } = await supabase
+    .from('getplaces')
+    .select();
+  
+  // If view fails, try querying the places table directly
+  if (placesError || !allPlaces || allPlaces.length === 0) {
+    const directQuery = await supabase
+      .from('places')
+      .select();
+    
+    allPlaces = directQuery.data;
+    placesError = directQuery.error;
   }
+  
+  const places = (allPlaces as Place[]) ?? [];
 
+  // Fetch Goma places
+  const { data: allGomaPlaces, error: gomaError } = await supabase
+    .from('place_in_goma_view')
+    .select();
+  
+  const gomaPlaces = (allGomaPlaces as Place[]) ?? [];
 
-  // Fetching Goma place
-  const gomaPlaces = await supabase.from('place_in_goma_view').select();
-  const allGomaPlaces = gomaPlaces.data ?? [];
+  // Fetch Kinshasa places
+  const { data: allKinshasaPlaces, error: kinshasaError } = await supabase
+    .from('place_in_kinshasa_view')
+    .select();
+  
+  const kinshasaPlaces = (allKinshasaPlaces as Place[]) ?? [];
 
-
-  // Fetching Kinshasa place
-  const kinshasaPlaces = await supabase.from('place_in_kinshasa_view').select();
-  const allKinshasaPlaces = kinshasaPlaces.data ?? [];
-
-
-  // Fetching all events
-  const events = await supabase.from('getevents').select();
-  const allEvents = events.data ?? [];
-
-  if (allEvents !== undefined && allEvents?.length > 1) {
-    useStore.setState({ event: allEvents });
+  // Fetch all events - try view first, then table
+  let { data: allEvents, error: eventsError } = await supabase
+    .from('getevents')
+    .select();
+  
+  // If view fails, try querying the events table directly
+  if (eventsError || !allEvents || allEvents.length === 0) {
+    const directQuery = await supabase
+      .from('events')
+      .select();
+    
+    allEvents = directQuery.data;
+    eventsError = directQuery.error;
   }
+  
+  const events = (allEvents as Event[]) ?? [];
 
-  const allEventsToDisplay = useStore.getState().event;
+  // Fetch user profile if authenticated
+  let userProfile: User[] | null = null;
+  let reservations: Reservation[] = [];
 
-  let { data: users, error } = await supabase
-    .from('users')
-    .select("*")
-    .eq('email', `${user?.email}`)
+  if (user?.email) {
+    const { data: userData } = await supabase
+      .from('users')
+      .select("*")
+      .eq('email', user.email);
+    
+    userProfile = userData as User[];
 
-  // Fetching all reservations
-  const reservations = await supabase.from("event_reservations").select("*").eq('userid', `${user?.email}`);
-  const allReservations = reservations.data ?? [];
-
-  if (allReservations !== undefined && allReservations?.length > 1) {
-    useStore.setState({ reservation: allReservations });
+    // Fetch user reservations
+    const { data: reservationData } = await supabase
+      .from("event_reservations")
+      .select("*")
+      .eq('userid', user.email);
+    
+    reservations = (reservationData as Reservation[]) ?? [];
   }
-
-  const allReservationsToDisplay = useStore.getState().reservation;
 
   return (
     <>
-      <StoreInitializer name={"Laurent"} place={allPlaces} event={allEventsToDisplay} reservation={allReservationsToDisplay} />
+      <StoreInitializer 
+        name={"Laurent"} 
+        place={places} 
+        event={events} 
+        reservation={reservations} 
+      />
 
       <div className="w-full flex flex-col items-center">
         <NavigationBar navigation={navigation} user={user} />
 
-        {user ?
-          (
-            <div>
-              {users ? (<AuthenticatedUserDashboard plans={plans} />) : (<AuthenticatedUserRegistrationClientComponent userTitle={userTitle} userDesignation={userDesignation} user={user} publicSupabaseUrl={publicSupabaseUrl} publicSupabaseAnonKey={publicSupabaseAnonKey} />)}
-
-              {/* {users ? (<AuthenticatedUserRegistrationClientComponent userTitle={userTitle} userDesignation={userDesignation} user={user} publicSupabaseUrl={publicSupabaseUrl} publicSupabaseAnonKey={publicSupabaseAnonKey} />) : (<AuthenticatedUserDashboard plans={plans} />)} */}
-            </div>
-          )
-          :
-          (
-            <UnauthenticatedUser allEventsToDisplay={allEventsToDisplay} allGomaPlaces={allGomaPlaces} allKinshasaPlaces={allKinshasaPlaces} />
-          )}
+        {user ? (
+          <div className="w-full">
+            {userProfile && userProfile.length > 0 ? (
+              <AuthenticatedUserDashboard plans={plans} />
+            ) : (
+              <AuthenticatedUserRegistrationClientComponent 
+                userTitle={userTitle} 
+                userDesignation={userDesignation} 
+                user={user} 
+                publicSupabaseUrl={publicSupabaseUrl} 
+                publicSupabaseAnonKey={publicSupabaseAnonKey} 
+              />
+            )}
+          </div>
+        ) : (
+          <UnauthenticatedUser 
+            allEventsToDisplay={events} 
+            allGomaPlaces={gomaPlaces} 
+            allKinshasaPlaces={kinshasaPlaces} 
+          />
+        )}
       </div>
 
       <FooterComponent footerNavs={footerNavs} />

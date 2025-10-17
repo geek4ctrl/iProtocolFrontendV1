@@ -1,10 +1,10 @@
-
+import type { Plan } from "@/types";
 import AuthenticatedUserDashboardContent from "./AuthenticatedUserDashboardContent";
 import AuthenticatedUserDashboardSubNav from "./AuthenticatedUserDashboardSubNav";
 import AuthenticatedUserDashboardTitle from "./AuthenticatedUserDashboardTitle";
 
 interface AuthenticatedUserDashboardProps {
-    plans: any; // You should replace 'any' with the appropriate type for 'plans'
+    plans: Plan[];
 }
 
 const subNavigation = [
@@ -24,7 +24,7 @@ const subNavigation = [
 
 const subNavIdx = 0;
 
-export default function AuthenticatedUserDashboard({ plans }: { plans: AuthenticatedUserDashboardProps }) {
+export default function AuthenticatedUserDashboard({ plans }: AuthenticatedUserDashboardProps) {
 
     return (
         <>

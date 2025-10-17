@@ -31,8 +31,6 @@ export default function AuthenticatedUserReservationsComponent({ allReservations
 
     const allReservationsToDisplayHere = useStore((state) => state.reservation) ? useStore((state) => state.reservation) : allReservations;
 
-    console.log('Damn 1! ', allReservationsToDisplayHere)
-
     return (
         <section className="py-28">
             <div className="max-w-screen-lg mx-auto px-4 md:px-8">

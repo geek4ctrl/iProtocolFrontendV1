@@ -1,10 +1,11 @@
+import type { Event, Place } from "@/types";
 import { NavigationClientComponent } from "./NavigationClientComponent";
 import UnauthenticatedUserEventsComponent from "./UnauthenticatedUserEventsComponent";
 
 interface UnauthenticatedUserProps {
-    allEventsToDisplay: any;
-    allGomaPlaces: any;
-    allKinshasaPlaces: any;
+    allEventsToDisplay: Event[];
+    allGomaPlaces: Place[];
+    allKinshasaPlaces: Place[];
 }
 
 export default function UnauthenticatedUser({ allEventsToDisplay, allGomaPlaces, allKinshasaPlaces }: UnauthenticatedUserProps) {
