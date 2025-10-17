@@ -36,15 +36,15 @@ export default function UnauthenticatedUserEventsComponent({ allEventsToDisplay 
                                         <img src={items.eventpicture} className="w-full h-full rounded-full object-cover" alt={items.author} />
                                     </div>
                                     <div className="ml-3">
-                                        <span className="block text-gray-900 dark:text-gray-100 font-semibold">{items.author}</span>
-                                        <span className="block text-gray-600 dark:text-gray-400 text-sm">{items.time}</span>
+                                        <span className="block text-gray-900 dark:text-white font-semibold">{items.author}</span>
+                                        <span className="block text-gray-600 dark:text-gray-200 text-sm">{items.time}</span>
                                     </div>
                                 </div>
                                 <div className="pt-3 ml-4 mr-2 mb-3">
-                                    <h3 className="text-xl text-gray-900 dark:text-gray-100 font-bold">
+                                    <h3 className="text-xl text-gray-900 dark:text-white font-bold">
                                         {items.date}
                                     </h3>
-                                    <p className="text-gray-700 dark:text-gray-300 text-sm mt-1 font-medium">{items.title}</p>
+                                    <p className="text-gray-700 dark:text-gray-200 text-sm mt-1 font-medium">{items.title}</p>
                                 </div>
                             </button>
                         </article>
@@ -57,8 +57,8 @@ export default function UnauthenticatedUserEventsComponent({ allEventsToDisplay 
                         <svg className="mx-auto h-12 w-12 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        <h3 className="mt-2 text-lg font-bold text-gray-900 dark:text-gray-100">No events available</h3>
-                        <p className="mt-1 text-base text-gray-700 dark:text-gray-300">Check back later for upcoming events.</p>
+                        <h3 className="mt-2 text-lg font-bold text-gray-900 dark:text-white">No events available</h3>
+                        <p className="mt-1 text-base text-gray-700 dark:text-gray-200">Check back later for upcoming events.</p>
                     </div>
                 </div>
             )}

@@ -21,6 +21,7 @@ export default function NavigationBar({ navigation, user }: NavigationBarProps) 
                             width={120}
                             height={50}
                             alt="Float UI logo"
+                            className="dark:invert"
                         />
                     </a>
                     <div className="md:hidden">

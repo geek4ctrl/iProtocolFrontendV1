@@ -53,24 +53,27 @@ export function NavigationClientComponent({ allGomaPlaces, allKinshasaPlaces }: 
     }
 
     return (
-        <section className="py-28" style={{ background: "linear-gradient(152.92deg, rgba(192, 132, 252, 0.2) 4.54%, rgba(232, 121, 249, 0.17) 34.2%, rgba(192, 132, 252, 0.1) 77.55%)", width: "-webkit-fill-available" }}>
+        <section className="py-28" style={{ background: "linear-gradient(152.92deg, rgba(192, 132, 252, 0.2) 4.54%, rgba(232, 121, 249, 0.17) 34.2%, rgba(192, 132, 252, 0.1) 77.55%)", width: "-webkit-fill-available" }} aria-label="Event Navigation Section">
             <div className="max-w-screen-xl mx-auto px-4 md:text-center md:px-8">
                 <div className="max-w-xl space-y-3 md:mx-auto">
-                    <p className="text-gray-800 text-3xl font-semibold sm:text-4xl">
+                    <p className="text-gray-800 dark:text-white text-3xl font-semibold sm:text-4xl" role="heading" aria-level="1">
                         Program of the papal visit
                     </p>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-200" role="note">
                         Always arrive 2 hours before
                     </p>
                 </div>
 
-                <div className="mt-4 flex gap-2 justify-center flex-wrap" style={{ cursor: "pointer" }}>
+                <nav className="mt-4 flex gap-2 justify-center flex-wrap" style={{ cursor: "pointer" }} aria-label="Event places navigation" role="navigation">
                     <div className="flex flex-col w-full gap-3 sm:flex-row sm:gap-2 sm:justify-center">
                         <button 
                             onClick={showAllEvents}
                             className={`w-full sm:w-auto py-3 px-4 text-white font-medium duration-150 rounded-lg shadow-md hover:shadow-none focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
                                 selectedPlace === null ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-600 hover:bg-gray-700'
                             }`}
+                            aria-current={selectedPlace === null ? 'page' : undefined}
+                            aria-label="Show all events"
+                            role="button"
                         >
                             All Events
                         </button>
@@ -82,13 +85,16 @@ export function NavigationClientComponent({ allGomaPlaces, allKinshasaPlaces }: 
                                     className={`w-full sm:w-auto py-3 px-4 text-white font-medium duration-150 rounded-lg shadow-md hover:shadow-none focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
                                         selectedPlace === items.place ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-800 hover:bg-gray-700'
                                     }`}
+                                    aria-current={selectedPlace === items.place ? 'page' : undefined}
+                                    aria-label={`Show events for ${items.place}`}
+                                    role="button"
                                 >
                                     {items.place}
                                 </button>
                             ))
                         }
                     </div>
-                </div>
+                </nav>
 
             </div>
         </section>
