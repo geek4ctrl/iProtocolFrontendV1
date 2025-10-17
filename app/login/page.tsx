@@ -1,18 +1,11 @@
 import LogoutButton from '@/components/LogoutButton';
+import NavigationBar from '@/components/NavigationBar';
+import FooterComponent from '@/components/FooterComponent';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import Messages from './messages';
-
-interface NavigationItem {
-  title: string;
-  path: string;
-}
-
-interface FooterNavItem {
-  href: string;
-  name: string;
-}
+import type { NavigationItem, FooterNavItem } from '@/types';
 
 export default async function Login() {
 
@@ -23,196 +16,125 @@ export default async function Login() {
   } = await supabase.auth.getUser();
 
   const navigation: NavigationItem[] = [
-    { title: "Francais", path: "javascript:void(0)" },
-    { title: "English", path: "javascript:void(0)" },
-    { title: "Italien", path: "javascript:void(0)" },
+    { title: "Français", path: "#" },
+    { title: "English", path: "#" },
+    { title: "Italiano", path: "#" },
   ];
 
   const footerNavs: FooterNavItem[] = [
-    {
-      href: 'javascript:void()',
-      name: 'About'
-    },
-    {
-      href: 'javascript:void()',
-      name: 'Blog'
-    },
-    {
-      href: 'javascript:void()',
-      name: ''
-    },
-    {
-      href: 'javascript:void()',
-      name: 'Team'
-    },
-    {
-      href: 'javascript:void()',
-      name: 'Careers'
-    },
-
-    {
-      href: 'javascript:void()',
-      name: 'Support'
-    }
+    { href: '/about', name: 'About' },
+    { href: '/events', name: 'Events' },
+    { href: '/contact', name: 'Contact' },
+    { href: '/support', name: 'Support' }
   ];
 
   return (
+    <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
+      <NavigationBar navigation={navigation} user={user} />
 
-    <>
+      <div className="flex-1 flex flex-col w-full px-4 sm:px-8 py-16 justify-center items-center">
+        <div className="w-full max-w-md space-y-10">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 py-2 px-4 rounded-md no-underline text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors group text-sm"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4 transition-transform group-hover:-translate-x-1"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Back to Home
+          </Link>
 
-      <nav className="bg-white border-b w-full md:static md:text-sm md:border-none">
-        <div className="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
-          <div className="flex items-center justify-between py-3 md:py-5 md:block">
-            <a href="/">
-              <img
-                src="https://res.cloudinary.com/dhqvb8wbn/image/upload/v1653855971/iProtocol_icone_i1wzgx.png"
-                width={120}
-                height={50}
-                alt="Float UI logo"
-              />
-            </a>
-            <div className="md:hidden">
-              <button className="text-gray-500 hover:text-gray-800"
-              >
-                {
-                  (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  )
-                }
-              </button>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-10">
+            <div className="mb-10">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                Welcome Back
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Sign in to your account to continue
+              </p>
             </div>
-          </div>
-          <div className={`flex-1 pb-3 mt-8 md:block md:pb-0 md:mt-0 ${'block'}`}>
-            <ul className="justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0">
-              {
-                navigation.map((item, idx) => {
-                  return (
-                    <li key={idx} className="text-gray-700 hover:text-indigo-600">
-                      <a href="javascript:void(0)" className="block">
-                        {item.title}
-                      </a>
-                    </li>
-                  )
-                })
-              }
-              <span className='hidden w-px h-6 bg-gray-300 md:block'></span>
-              <div className='space-y-3 items-center gap-x-6 md:flex md:space-y-0'>
 
-                {user ? (
-                  <div className="flex items-center gap-4">
-                    Hey, {user.email}!
-                    <LogoutButton />
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-4">
-                    <Link href="/login" className="block py-3 text-center text-gray-700 hover:text-indigo-600 border rounded-lg md:border-none">
-                      Log in
-                    </Link>
-
-                    <Link href="/login" className="block py-3 px-4 font-medium text-center text-white bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 active:shadow-none rounded-lg shadow md:inline">
-                      Sign in
-                    </Link>
-                  </div>
-                )}
-
+            <form
+              className="flex flex-col gap-7"
+              action="/auth/sign-in"
+              method="post"
+            >
+              <div>
+                <label 
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" 
+                  htmlFor="email"
+                >
+                  Email Address
+                </label>
+                <input
+                  className="w-full rounded-md px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  required
+                />
               </div>
-            </ul>
+
+              <div>
+                <label 
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" 
+                  htmlFor="password"
+                >
+                  Password
+                </label>
+                <input
+                  className="w-full rounded-md px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  type="password"
+                  name="password"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+
+              <button 
+                type="submit"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold rounded-md px-4 py-3.5 transition-colors shadow-sm hover:shadow-md mt-2"
+              >
+                Sign In
+              </button>
+
+              <div className="relative my-3">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                    Don't have an account?
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                formAction="/auth/sign-up"
+                className="w-full bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 font-medium border border-gray-300 dark:border-gray-600 rounded-md px-4 py-3.5 transition-colors shadow-sm hover:shadow-md"
+              >
+                Create Account
+              </button>
+
+              <Messages />
+            </form>
           </div>
         </div>
-      </nav>
-
-      <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-        <Link
-          href="/"
-          className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
-          >
-            <polyline points="15 18 9 12 15 6" />
-          </svg>{' '}
-          Back
-        </Link>
-
-        <form
-          className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
-          action="/auth/sign-in"
-          method="post"
-        >
-          <label className="text-md" htmlFor="email">
-            Email
-          </label>
-          <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
-            name="email"
-            placeholder="you@example.com"
-            required
-          />
-          <label className="text-md" htmlFor="password">
-            Password
-          </label>
-          <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
-            type="password"
-            name="password"
-            placeholder="••••••••"
-            required
-          />
-          <button className="bg-green-700 rounded px-4 py-2 text-white mb-2">
-            Sign In
-          </button>
-          <button
-            formAction="/auth/sign-up"
-            className="border border-gray-700 rounded px-4 py-2 text-black mb-2"
-          >
-            Sign Up
-          </button>
-          <Messages />
-        </form>
       </div>
 
-      <footer className="text-gray-500 px-4 py-5 max-w-screen-xl mx-auto md:px-8 mt-4" style={{ width: "-webkit-fill-available", marginTop: "2rem" }}>
-        <div className="max-w-lg sm:mx-auto sm:text-center">
-          <img src="https://res.cloudinary.com/dhqvb8wbn/image/upload/v1653855971/iProtocol_icone_i1wzgx.png" className="w-32 sm:mx-auto" />
-          <p className="leading-relaxed mt-2 text-[15px]">
-            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-          </p>
-        </div>
-        <ul className="items-center justify-center mt-8 space-y-5 sm:flex sm:space-x-4 sm:space-y-0">
-          {
-            footerNavs.map((item, idx) => (
-              <li className=" hover:text-gray-800">
-                <a key={idx} href={item.href}>
-                  {item.name}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-        <div className="mt-8 items-center justify-between sm:flex" >
-          <div className="mt-4 sm:mt-0">
-            &copy; 2023 iProtocol All rights reserved.
-          </div>
-          <div className="mt-6 sm:mt-0">
-            <ul className="flex items-center space-x-4">
-            </ul>
-          </div>
-        </div>
-      </footer>
-
-    </>
-
-
+      <FooterComponent footerNavs={footerNavs} />
+    </div>
   )
 }

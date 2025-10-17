@@ -1,6 +1,8 @@
 'use client'
 
 import { useStore } from "@/src/store";
+import type { Event } from "@/types";
+import { useState, useEffect } from "react";
 
 interface NavigationItem {
     // Define the structure of a navigation item as needed
@@ -20,20 +22,34 @@ interface NavigationBarProps {
 
 export function NavigationClientComponent({ allGomaPlaces, allKinshasaPlaces }: { allGomaPlaces: any, allKinshasaPlaces: any }) {
 
-    const { name } = useStore();
     const allPlaces = useStore((state) => state.place)
-    const allEvents = useStore((state) => state.event)
+    const allEventsFromStore = useStore((state) => state.event)
+    const [originalEvents, setOriginalEvents] = useState<Event[]>([])
+    const [selectedPlace, setSelectedPlace] = useState<string | null>(null)
 
-    function choosePlace(place: any) {
-        if (place == 'Goma') {
-            useStore.setState((state) => ({
-                event: allGomaPlaces
-            }))
-        } else {
-            useStore.setState((state) => ({
-                event: allKinshasaPlaces
-            }))
+    // Store the original events on mount
+    useEffect(() => {
+        if (allEventsFromStore && allEventsFromStore.length > 0 && originalEvents.length === 0) {
+            setOriginalEvents(allEventsFromStore)
         }
+    }, [allEventsFromStore])
+
+    function choosePlace(place: string) {
+        setSelectedPlace(place)
+        // Filter events by the selected place
+        const filteredEvents = originalEvents.filter((event: Event) => event.place === place)
+        
+        useStore.setState(() => ({
+            event: filteredEvents
+        }))
+    }
+
+    function showAllEvents() {
+        setSelectedPlace(null)
+        // Reset to show all events
+        useStore.setState(() => ({
+            event: originalEvents
+        }))
     }
 
     return (
@@ -48,14 +64,26 @@ export function NavigationClientComponent({ allGomaPlaces, allKinshasaPlaces }: 
                     </p>
                 </div>
 
-                <div className="mt-4" style={{ cursor: "pointer" }}>
+                <div className="mt-4 flex gap-2 justify-center flex-wrap" style={{ cursor: "pointer" }}>
+                    <button 
+                        onClick={showAllEvents}
+                        className={`inline-block py-2 px-4 text-white font-medium duration-150 rounded-lg shadow-md hover:shadow-none ${
+                            selectedPlace === null ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-600 hover:bg-gray-700'
+                        }`}
+                    >
+                        All Events
+                    </button>
                     {
                         allPlaces?.map((items: any, key: any) => (
-
-                            <a className="inline-block py-2 px-4 mr-2 text-white font-medium bg-gray-800 duration-150 hover:bg-gray-700 active:bg-gray-900 rounded-lg shadow-md hover:shadow-none" onClick={() => choosePlace(items.place)}>
+                            <button 
+                                key={key}
+                                onClick={() => choosePlace(items.place)}
+                                className={`inline-block py-2 px-4 text-white font-medium duration-150 rounded-lg shadow-md hover:shadow-none ${
+                                    selectedPlace === items.place ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-800 hover:bg-gray-700'
+                                }`}
+                            >
                                 {items.place}
-                            </a>
-
+                            </button>
                         ))
                     }
                 </div>

@@ -16,6 +16,7 @@ export interface Event {
   time: string;
   eventpicture: string;
   description?: string;
+  place?: string;  // City/location name (e.g., "Goma", "Kinshasa")
   place_id?: string;
   created_at?: string;
 }
