@@ -5,6 +5,7 @@ import NavigationBar from "@/components/NavigationBar";
 import { NavigationClientComponent } from "@/components/NavigationClientComponent";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+import type { NavigationItem } from '@/types';
 
 interface Event {
     // Define the shape of an event
@@ -35,10 +36,10 @@ interface IndexProps {
     publicSupabaseAnonKey: string;
 }
 
-const navigation = [
-    { title: "Francais", path: "javascript:void(0)" },
-    { title: "English", path: "javascript:void(0)" },
-    { title: "Italien", path: "javascript:void(0)" },
+const navigation: NavigationItem[] = [
+    { title: "Français", path: "#" },
+    { title: "English", path: "#" },
+    { title: "Italiano", path: "#" },
 ];
 
 let userInformation = {}
@@ -92,15 +93,14 @@ export default async function Index() {
     }
 
     return (
-        <>
-            <div className="w-full flex flex-col items-center">
-
-                <NavigationBar navigation={navigation} user={user} />
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+            <NavigationBar navigation={navigation} user={user} />
+            <div className="flex-1 w-full">
                 <BackButton />
                 <AuthenticatedUserEventsSubNav />
                 <NavigationClientComponent allGomaPlaces={allGomaPlaces} allKinshasaPlaces={allKinshasaPlaces} />
                 <AuthenticatedUserEvents allEvents={allEvents} user={user} userInformation={userInformation} publicSupabaseUrl={publicSupabaseUrl} publicSupabaseAnonKey={publicSupabaseAnonKey} />
             </div>
-        </>
+        </div>
     );
 }

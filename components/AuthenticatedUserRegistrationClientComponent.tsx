@@ -30,76 +30,112 @@ interface AuthenticatedUserRegistrationClientComponentProps {
 
 export default function AuthenticatedUserRegistrationClientComponent({ userTitle, userDesignation, user, publicSupabaseUrl, publicSupabaseAnonKey }: { userTitle: any, userDesignation: any, user: any, publicSupabaseUrl: any, publicSupabaseAnonKey: any }) {
 
-    const [userId, setUserId] = useState(user.id);
+    const [userId, setUserId] = useState(user?.id);
     const [media, setMedia] = useState([]);
 
     const [picture, setPicture] = useState(false);
     const [document, setDocument] = useState(false);
 
     const [enabled, setEnabled] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     let [errorToDisplay, setErrorToDisplay] = useState<any>()
+    let [successMessage, setSuccessMessage] = useState<string | null>(null)
 
     async function onSubmit(event: any) {
         event.preventDefault()
+        setIsSubmitting(true)
+        setErrorToDisplay(null)
+        setSuccessMessage(null)
 
-        const formData = new FormData(event.currentTarget)
+        try {
+            const formData = new FormData(event.currentTarget)
 
-        const title = String(formData.get('title'))
-        const firstname = String(formData.get('firstname'))
-        const surname = String(formData.get('surname'))
-        const postname = String(formData.get('postname'))
-        const category = String(formData.get('category'))
-        const diocese = String(formData.get('diocese'))
-        const uploadpicture = String(formData.get('uploadpicture'))
-        const uploaddocument = String(formData.get('uploaddocument'))
-        const email = 'ema@gmail.com'
+            const title = String(formData.get('title'))
+            const firstname = String(formData.get('firstname'))
+            const surname = String(formData.get('surname'))
+            const postname = String(formData.get('postname'))
+            const category = String(formData.get('category'))
+            const diocese = String(formData.get('diocese'))
+            
+            // Use the actual user email from the authenticated user
+            const email = user?.email || ''
 
-        const formDataToSend = {
-            title,
-            firstname,
-            surname,
-            postname,
-            email,
-            category,
-            diocese,
-            uploadpicture,
-            uploaddocument,
-        }
-
-        const { error } = await supabase
-            .from('users')
-            .insert(formDataToSend)
-
-        if (error) {
-            if (error.code === "23505") {
-                // errorToDisplay = error.message;
-                setErrorToDisplay(error?.message);
+            if (!email) {
+                setErrorToDisplay('User email not found. Please log in again.')
+                setIsSubmitting(false)
+                return
             }
-        } else {
-            location.reload();
-        }
 
+            const formDataToSend = {
+                id: userId,
+                title,
+                firstname,
+                surname,
+                postname,
+                email,
+                category,
+                diocese,
+            }
+
+            const { data, error } = await supabase
+                .from('users')
+                .insert(formDataToSend)
+                .select()
+
+            if (error) {
+                console.error('Registration error:', error)
+                
+                if (error.code === "23505") {
+                    setErrorToDisplay('You have already registered. This email is already in use.')
+                } else if (error.code === "42P01") {
+                    setErrorToDisplay('Database table "users" does not exist. Please contact support.')
+                } else {
+                    setErrorToDisplay(error.message || 'An error occurred during registration. Please try again.')
+                }
+            } else {
+                setSuccessMessage('Registration successful! Redirecting...')
+                
+                // Reload after a short delay to show success message
+                setTimeout(() => {
+                    location.reload()
+                }, 1500)
+            }
+        } catch (err) {
+            console.error('Unexpected error:', err)
+            setErrorToDisplay('An unexpected error occurred. Please try again.')
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     // Upload picture
-    async function uploadPicture(e) {
-        let file = e.target.files[0];
+    async function uploadPicture(e: React.ChangeEvent<HTMLInputElement>) {
+        if (!e.target.files || e.target.files.length === 0) return;
+        
+        const file = e.target.files[0];
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${userId}/picture.${fileExt}`
+
+        // Remove old file first if exists
+        await supabase.storage
+            .from('iprotocol')
+            .remove([`${userId}/picture`])
 
         const { data, error } = await supabase
             .storage
             .from('iprotocol')
-            .upload(userId + "/" + "picture", file as File)
+            .upload(fileName, file, {
+                cacheControl: '3600',
+                upsert: true
+            })
 
         if (data) {
-            getMediaPicture();
-            setPicture(true);
-
-            if (picture == true && document == true) {
-                setEnabled(true);
-            }
+            setPicture(true)
+            console.log('Picture uploaded successfully')
         } else {
-            setPicture(false);
+            console.error('Picture upload error:', error)
+            setPicture(false)
         }
     }
 
@@ -122,24 +158,32 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
     }
 
     // Upload documents
-    async function uploadDocument(e) {
-        let file = e.target.files[0];
+    async function uploadDocument(e: React.ChangeEvent<HTMLInputElement>) {
+        if (!e.target.files || e.target.files.length === 0) return;
+        
+        const file = e.target.files[0];
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${userId}/document.${fileExt}`
+
+        // Remove old file first if exists
+        await supabase.storage
+            .from('iprotocol')
+            .remove([`${userId}/document`])
 
         const { data, error } = await supabase
             .storage
             .from('iprotocol')
-            .upload(userId + "/" + "document", file as File)
+            .upload(fileName, file, {
+                cacheControl: '3600',
+                upsert: true
+            })
 
         if (data) {
-            getDocumentMedia();
-            setDocument(true);
-
-
-            if (picture == true && document == true) {
-                setEnabled(true);
-            }
+            setDocument(true)
+            console.log('Document uploaded successfully')
         } else {
-            setDocument(false);
+            console.error('Document upload error:', error)
+            setDocument(false)
         }
     }
 
@@ -164,143 +208,197 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
 
     return (
         <form
-            className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
+            className="flex-1 flex flex-col w-full max-w-2xl mx-auto px-4 py-8"
             onSubmit={onSubmit}
         >
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-8">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Registration Form</h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-8">Please complete your profile information</p>
 
-            <select name="title" className="rounded-md px-4 py-2 bg-inherit border mb-6 mt-8">
-                {userTitle.map(function (n: any) {
-                    return (<option value={n.value}>{n.value}</option>);
-                })}
-            </select>
-
-            <input
-                className="rounded-md px-4 py-2 bg-inherit border mb-6"
-                type="text"
-                name="firstname"
-                placeholder="Firstname *"
-                required
-            />
-
-            <input
-                className="rounded-md px-4 py-2 bg-inherit border mb-6"
-                name="surname"
-                placeholder="Surname *"
-                required
-            />
-
-            <input
-                className="rounded-md px-4 py-2 bg-inherit border mb-6"
-                type="text"
-                name="postname"
-                placeholder="Post name *"
-                required
-            />
-
-
-            <input
-                className="rounded-md px-4 py-2 bg-inherit border mb-6"
-                type="text"
-                name="email"
-                placeholder={user.email}
-                value={user.email}
-                required
-                disabled
-            />
-
-            <input
-                className="rounded-md px-4 py-2 bg-inherit border mb-6"
-                type="text"
-                name="category"
-                placeholder="Category"
-                required
-            />
-
-            <select name="diocese" className="rounded-md px-4 py-2 bg-inherit border mb-6">
-                {userDesignation.map(function (n: any) {
-                    return (<option value={n.value}>{n.value}</option>);
-                })}
-            </select>
-
-            <label className="cursor-pointer text-center p-4 md:p-8">
-                <p className="mt-3 text-gray-700 max-w-xs mx-auto">Click to <span className="font-medium text-indigo-600">Upload a picture</span> or drag and drop your file here</p>
-            </label>
-
-            <input
-                className="rounded-md px-4 py-2 bg-inherit border mb-6"
-                type="file"
-                name="uploadpicture"
-                placeholder="Upload a picture"
-                onChange={(e) => uploadPicture(e)}
-                required
-            />
-
-            {
-                media.map((media) => {
-                    return (
-                        <>
-                            <img src={`https://mnjnkqyurgbrgflwcugc.supabase.co/storage/v1/object/public/iprotocol/${user.id}/picture`} alt="" />
-                        </>
-                    )
-                })
-            }
-
-            <label className="cursor-pointer text-center p-4 md:p-8">
-                <p className="mt-3 text-gray-700 max-w-xs mx-auto">Click to <span className="font-medium text-indigo-600">Upload documents</span> or drag and drop your file here</p>
-            </label>
-
-            <input
-                className="rounded-md px-4 py-2 bg-inherit border mb-6"
-                type="file"
-                name="uploaddocument"
-                placeholder="Upload documents"
-                onChange={(e) => uploadDocument(e)}
-                required
-            />
-
-            {
-                media.map((media) => {
-                    return (
-                        <>
-                            <img src={`https://mnjnkqyurgbrgflwcugc.supabase.co/storage/v1/object/public/iprotocol/${user.id}/document`} alt="" />
-                        </>
-                    )
-                })
-            }
-
-            <button className="bg-green-700 rounded px-4 py-2 text-white mb-2">
-                Clear
-            </button>
-            <button
-                className="border border-gray-700 rounded px-4 py-2 text-black mb-2"
-            >
-                Register
-            </button>
-
-            {errorToDisplay ? <div className="mt-12 mx-4 px-4 rounded-md border-l-4 border-red-500 bg-red-50 md:max-w-2xl md:mx-auto md:px-8" style={{ backgroundColor: "#FEF2F2" }}>
-                <div className="flex justify-between py-3">
-                    <div className="flex">
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                            </svg>
-                        </div>
-                        <div className="self-center ml-3">
-                            <span className="text-red-600 font-semibold">
-                                Error
-                            </span>
-                            <p className="text-red-600 mt-1">
-                                {errorToDisplay}
-                            </p>
-                        </div>
+                <div className="space-y-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title *</label>
+                        <select name="title" className="w-full rounded-md px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                            {userTitle.map(function (n: any, idx: number) {
+                                return (<option key={idx} value={n.value}>{n.value}</option>);
+                            })}
+                        </select>
                     </div>
-                    <button className="self-start text-red-500">
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name *</label>
+                        <input
+                            className="w-full rounded-md px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            type="text"
+                            name="firstname"
+                            placeholder="Enter your first name"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Surname *</label>
+                        <input
+                            className="w-full rounded-md px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            name="surname"
+                            placeholder="Enter your surname"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Post Name *</label>
+                        <input
+                            className="w-full rounded-md px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            type="text"
+                            name="postname"
+                            placeholder="Enter your post name"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                        <input
+                            className="w-full rounded-md px-4 py-3 bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 cursor-not-allowed"
+                            type="text"
+                            name="email"
+                            placeholder={user.email}
+                            value={user.email}
+                            required
+                            disabled
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category *</label>
+                        <input
+                            className="w-full rounded-md px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            type="text"
+                            name="category"
+                            placeholder="Enter your category"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Diocese *</label>
+                        <select name="diocese" className="w-full rounded-md px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                            {userDesignation.map(function (n: any, idx: number) {
+                                return (<option key={idx} value={n.value}>{n.value}</option>);
+                            })}
+                        </select>
+                    </div>
+
+                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 bg-gray-50 dark:bg-gray-700/50">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Profile Picture *</label>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Click to <span className="font-medium text-indigo-600 dark:text-indigo-400">upload a picture</span> or drag and drop your file here</p>
+                        <input
+                            className="w-full text-sm text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400"
+                            type="file"
+                            name="uploadpicture"
+                            accept="image/*"
+                            onChange={(e) => uploadPicture(e)}
+                            required
+                        />
+
+                        {media.length > 0 && (
+                            <div className="mt-4">
+                                {media.map((media, idx) => (
+                                    <img key={idx} src={`https://mnjnkqyurgbrgflwcugc.supabase.co/storage/v1/object/public/iprotocol/${user.id}/picture`} alt="Profile" className="w-32 h-32 object-cover rounded-lg" />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 bg-gray-50 dark:bg-gray-700/50">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Documents *</label>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Click to <span className="font-medium text-indigo-600 dark:text-indigo-400">upload documents</span> or drag and drop your file here</p>
+                        <input
+                            className="w-full text-sm text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400"
+                            type="file"
+                            name="uploaddocument"
+                            accept=".pdf,.doc,.docx"
+                            onChange={(e) => uploadDocument(e)}
+                            required
+                        />
+
+                        {media.length > 0 && (
+                            <div className="mt-4">
+                                {media.map((media, idx) => (
+                                    <img key={idx} src={`https://mnjnkqyurgbrgflwcugc.supabase.co/storage/v1/object/public/iprotocol/${user.id}/document`} alt="Document" className="w-32 h-32 object-cover rounded-lg" />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex gap-4 pt-4">
+                        <button 
+                            type="button"
+                            onClick={(e) => {
+                                const form = e.currentTarget.closest('form')
+                                form?.reset()
+                                setPicture(false)
+                                setDocument(false)
+                                setErrorToDisplay(null)
+                                setSuccessMessage(null)
+                            }}
+                            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-md px-4 py-3 transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={isSubmitting}
+                        >
+                            Clear
+                        </button>
+                        <button
+                            type="submit"
+                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md px-4 py-3 transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Registering...' : 'Register'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {successMessage && <div className="mt-6 px-4 py-4 rounded-md border-l-4 border-green-500 bg-green-50 dark:bg-green-900/20 dark:border-green-400">
+                <div className="flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500 dark:text-green-400 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <div className="flex-1">
+                        <span className="text-green-600 dark:text-green-400 font-semibold block mb-1">
+                            Success
+                        </span>
+                        <p className="text-green-600 dark:text-green-300 text-sm">
+                            {successMessage}
+                        </p>
+                    </div>
+                </div>
+            </div>}
+
+            {errorToDisplay && <div className="mt-6 px-4 py-4 rounded-md border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 dark:border-red-400">
+                <div className="flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-500 dark:text-red-400 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <div className="flex-1">
+                        <span className="text-red-600 dark:text-red-400 font-semibold block mb-1">
+                            Error
+                        </span>
+                        <p className="text-red-600 dark:text-red-300 text-sm">
+                            {errorToDisplay}
+                        </p>
+                    </div>
+                    <button 
+                        type="button"
+                        onClick={() => setErrorToDisplay(null)}
+                        className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
                     </button>
                 </div>
-            </div> : ''}
+            </div>}
 
         </form>
     )
