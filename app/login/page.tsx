@@ -1,6 +1,7 @@
 import LogoutButton from '@/components/LogoutButton';
 import NavigationBar from '@/components/NavigationBar';
 import FooterComponent from '@/components/FooterComponent';
+import LoginForm from '@/components/LoginForm';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
@@ -65,71 +66,8 @@ export default async function Login() {
               </p>
             </div>
 
-            <form
-              className="flex flex-col gap-7"
-              action="/auth/sign-in"
-              method="post"
-            >
-              <div>
-                <label 
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" 
-                  htmlFor="email"
-                >
-                  Email Address
-                </label>
-                <input
-                  className="w-full rounded-md px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                  name="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  required
-                />
-              </div>
-
-              <div>
-                <label 
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" 
-                  htmlFor="password"
-                >
-                  Password
-                </label>
-                <input
-                  className="w-full rounded-md px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                  type="password"
-                  name="password"
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-
-              <button 
-                type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold rounded-md px-4 py-3.5 transition-colors shadow-sm hover:shadow-md mt-2"
-              >
-                Sign In
-              </button>
-
-              <div className="relative my-3">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                    Don't have an account?
-                  </span>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                formAction="/auth/sign-up"
-                className="w-full bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 font-medium border border-gray-300 dark:border-gray-600 rounded-md px-4 py-3.5 transition-colors shadow-sm hover:shadow-md"
-              >
-                Create Account
-              </button>
-
-              <Messages />
-            </form>
+            <LoginForm />
+            <Messages />
           </div>
         </div>
       </div>

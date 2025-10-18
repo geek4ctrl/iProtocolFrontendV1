@@ -2,8 +2,8 @@
 
 import type { Event } from "@/types";
 import { useStore } from "@/src/store"
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { showToast } from '@/utils/toast';
+import EmptyState from './EmptyState';
 
 interface UnauthenticatedUserEventsComponentProps {
     allEventsToDisplay: Event[];
@@ -18,11 +18,10 @@ export default function UnauthenticatedUserEventsComponent({ allEventsToDisplay 
         ? allEventsToDisplayHere 
         : allEventsToDisplay;
 
-    const notify = () => toast("Please login to make a reservation");
+    const notify = () => showToast.info('Please sign in to make a reservation.');
 
     return (
         <section className="mt-12 mx-auto px-4 max-w-screen-xl md:px-8">
-            <ToastContainer theme="colored" />
             {eventsToShow && eventsToShow.length > 0 ? (
             <div className="mt-12 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
 
@@ -52,15 +51,11 @@ export default function UnauthenticatedUserEventsComponent({ allEventsToDisplay 
                 }
             </div>
             ) : (
-                <div className="mt-12 text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="max-w-md mx-auto">
-                        <svg className="mx-auto h-12 w-12 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <h3 className="mt-2 text-lg font-bold text-gray-900 dark:text-white">No events available</h3>
-                        <p className="mt-1 text-base text-gray-700 dark:text-gray-200">Check back later for upcoming events.</p>
-                    </div>
-                </div>
+                <EmptyState 
+                    type="events"
+                    title="No Events Available"
+                    description="There are currently no events to display. Check back later for upcoming events."
+                />
             )}
         </section>
     )

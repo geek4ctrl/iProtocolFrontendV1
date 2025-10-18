@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-
+import { showToast, handleError, handleFileUploadError } from '@/utils/toast';
 import { v4 as uuidv4 } from 'uuid';
 
 interface UserTitle {
@@ -38,6 +38,8 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
 
     const [picture, setPicture] = useState(false);
     const [document, setDocument] = useState(false);
+    const [uploadingPicture, setUploadingPicture] = useState(false);
+    const [uploadingDocument, setUploadingDocument] = useState(false);
 
     const [enabled, setEnabled] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,31 +92,28 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
 
             if (error) {
                 console.error('Registration error:', error)
-                console.error('Error code:', error.code)
-                console.error('Error details:', error.details)
-                console.error('Error hint:', error.hint)
+                handleError(error, 'Registration');
                 
                 if (error.code === "23505") {
                     setErrorToDisplay('You have already registered. This email is already in use.')
                 } else if (error.code === "42P01") {
                     setErrorToDisplay('Database table "users" does not exist. Please contact support.')
                 } else if (error.code === "42501") {
-                    setErrorToDisplay('Permission denied. Row-level security policy error. Please check your database policies.')
-                } else if (error.message.includes('row-level security')) {
-                    setErrorToDisplay(`Security Policy Error: ${error.message}. Please contact support or check the database setup.`)
+                    setErrorToDisplay('Permission denied. Please check your access rights.')
                 } else {
-                    setErrorToDisplay(`Error (${error.code}): ${error.message || 'An error occurred during registration. Please try again.'}`)
+                    setErrorToDisplay(error.message || 'An error occurred during registration. Please try again.')
                 }
             } else {
+                showToast.success('Registration successful! Redirecting...', { autoClose: 1500 });
                 setSuccessMessage('Registration successful! Redirecting...')
                 
-                // Reload after a short delay to show success message
                 setTimeout(() => {
                     location.reload()
                 }, 1500)
             }
         } catch (err) {
             console.error('Unexpected error:', err)
+            handleError(err, 'Registration');
             setErrorToDisplay('An unexpected error occurred. Please try again.')
         } finally {
             setIsSubmitting(false)
@@ -125,29 +124,35 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
     async function uploadPicture(e: React.ChangeEvent<HTMLInputElement>) {
         if (!e.target.files || e.target.files.length === 0) return;
         
+        setUploadingPicture(true);
         const file = e.target.files[0];
         const fileExt = file.name.split('.').pop()
         const fileName = `${userId}/picture.${fileExt}`
 
-        // Remove old file first if exists
-        await supabase.storage
-            .from('iprotocol')
-            .remove([`${userId}/picture`])
+        try {
+            // Remove old file first if exists
+            await supabase.storage
+                .from('iprotocol')
+                .remove([`${userId}/picture`])
 
-        const { data, error } = await supabase
-            .storage
-            .from('iprotocol')
-            .upload(fileName, file, {
-                cacheControl: '3600',
-                upsert: true
-            })
+            const { data, error } = await supabase
+                .storage
+                .from('iprotocol')
+                .upload(fileName, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                })
 
-        if (data) {
-            setPicture(true)
-            console.log('Picture uploaded successfully')
-        } else {
-            console.error('Picture upload error:', error)
-            setPicture(false)
+            if (data) {
+                setPicture(true)
+                showToast.success('Picture uploaded successfully!');
+            } else {
+                console.error('Picture upload error:', error)
+                handleFileUploadError(error, 'picture');
+                setPicture(false)
+            }
+        } finally {
+            setUploadingPicture(false);
         }
     }
 
@@ -173,29 +178,35 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
     async function uploadDocument(e: React.ChangeEvent<HTMLInputElement>) {
         if (!e.target.files || e.target.files.length === 0) return;
         
+        setUploadingDocument(true);
         const file = e.target.files[0];
         const fileExt = file.name.split('.').pop()
         const fileName = `${userId}/document.${fileExt}`
 
-        // Remove old file first if exists
-        await supabase.storage
-            .from('iprotocol')
-            .remove([`${userId}/document`])
+        try {
+            // Remove old file first if exists
+            await supabase.storage
+                .from('iprotocol')
+                .remove([`${userId}/document`])
 
-        const { data, error } = await supabase
-            .storage
-            .from('iprotocol')
-            .upload(fileName, file, {
-                cacheControl: '3600',
-                upsert: true
-            })
+            const { data, error } = await supabase
+                .storage
+                .from('iprotocol')
+                .upload(fileName, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                })
 
-        if (data) {
-            setDocument(true)
-            console.log('Document uploaded successfully')
-        } else {
-            console.error('Document upload error:', error)
-            setDocument(false)
+            if (data) {
+                setDocument(true)
+                showToast.success('Document uploaded successfully!');
+            } else {
+                console.error('Document upload error:', error)
+                handleFileUploadError(error, 'document');
+                setDocument(false)
+            }
+        } finally {
+            setUploadingDocument(false);
         }
     }
 
@@ -304,13 +315,28 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
 
                     <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 bg-gray-50 dark:bg-gray-700/50">
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Profile Picture *</label>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Click to <span className="font-medium text-indigo-600 dark:text-indigo-400">upload a picture</span> or drag and drop your file here</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                            {uploadingPicture ? (
+                                <span className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+                                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Uploading picture...
+                                </span>
+                            ) : picture ? (
+                                <span className="text-green-600 dark:text-green-400 font-medium">✓ Picture uploaded successfully</span>
+                            ) : (
+                                <>Click to <span className="font-medium text-indigo-600 dark:text-indigo-400">upload a picture</span> or drag and drop your file here</>
+                            )}
+                        </p>
                         <input
-                            className="w-full text-sm text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400"
+                            className="w-full text-sm text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
                             type="file"
                             name="uploadpicture"
                             accept="image/*"
                             onChange={(e) => uploadPicture(e)}
+                            disabled={uploadingPicture || isSubmitting}
                             required
                         />
 
@@ -325,13 +351,28 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
 
                     <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 bg-gray-50 dark:bg-gray-700/50">
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Documents *</label>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Click to <span className="font-medium text-indigo-600 dark:text-indigo-400">upload documents</span> or drag and drop your file here</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                            {uploadingDocument ? (
+                                <span className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+                                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Uploading document...
+                                </span>
+                            ) : document ? (
+                                <span className="text-green-600 dark:text-green-400 font-medium">✓ Document uploaded successfully</span>
+                            ) : (
+                                <>Click to <span className="font-medium text-indigo-600 dark:text-indigo-400">upload documents</span> or drag and drop your file here</>
+                            )}
+                        </p>
                         <input
-                            className="w-full text-sm text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400"
+                            className="w-full text-sm text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
                             type="file"
                             name="uploaddocument"
                             accept=".pdf,.doc,.docx"
                             onChange={(e) => uploadDocument(e)}
+                            disabled={uploadingDocument || isSubmitting}
                             required
                         />
 
@@ -356,15 +397,21 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
                                 setSuccessMessage(null)
                             }}
                             className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-md px-4 py-3 transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || uploadingPicture || uploadingDocument}
                         >
                             Clear
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md px-4 py-3 transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={isSubmitting}
+                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md px-4 py-3 transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            disabled={isSubmitting || uploadingPicture || uploadingDocument}
                         >
+                            {isSubmitting && (
+                                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            )}
                             {isSubmitting ? 'Registering...' : 'Register'}
                         </button>
                     </div>

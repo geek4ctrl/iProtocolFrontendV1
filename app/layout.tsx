@@ -1,6 +1,8 @@
 import './globals.css'
 import { Analytics } from '@vercel/analytics/react';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import ToastProvider from '@/components/ToastProvider';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export const dynamic = 'force-dynamic'
 
@@ -18,10 +20,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="bg-white dark:bg-gray-900 transition-colors">
         <ThemeProvider>
-          <main className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center">
-            {children}
-            <Analytics />
-          </main>
+          <ErrorBoundary>
+            <main className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center">
+              {children}
+              <Analytics />
+            </main>
+            <ToastProvider />
+          </ErrorBoundary>
         </ThemeProvider>
       </body>
     </html>

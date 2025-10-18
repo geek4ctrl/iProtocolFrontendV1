@@ -1,8 +1,7 @@
 'use client'
 
 import { useStore } from "@/src/store";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { showToast } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
 import type { Plan } from '@/types';
 
@@ -14,8 +13,8 @@ export default function AuthenticatedUserDashboardContent({ plans }: Authenticat
     const router = useRouter()
 
     function callAllFunctions(reservationType: string) {
-        notify(reservationType)
         chooseReservationType(reservationType)
+        showToast.success(`✓ You have chosen ${reservationType}. Redirecting to events...`, { autoClose: 2000 });
 
         setTimeout(() => {
             routeToEventPage()
@@ -28,24 +27,12 @@ export default function AuthenticatedUserDashboardContent({ plans }: Authenticat
         }))
     }
 
-    const notify = (reservationType: string) => {
-        toast.success(`✓ You have chosen ${reservationType}`, {
-            position: "top-right",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-        })
-    }
-
     const routeToEventPage = () => {
         router.push('/events', { scroll: false })
     }
 
     return (
         <div className="mt-12">
-            <ToastContainer />
             <div className='grid gap-8 sm:grid-cols-2 lg:grid-cols-2 max-w-4xl mx-auto'>
                 {plans.map((item, idx) => (
                     <div 

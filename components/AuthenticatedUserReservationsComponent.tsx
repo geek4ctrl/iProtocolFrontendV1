@@ -1,9 +1,9 @@
 "use client"
 
 import { useStore } from '@/src/store';
-import 'react-toastify/dist/ReactToastify.css';
 import AuthenticatedUserReservationButtonComponent from './AuthenticatedUserReservationButtonComponent';
 import supabase from './SupabaseClient';
+import EmptyState from './EmptyState';
 
 // publicSupabaseUrl={publicSupabaseUrl} publicSupabaseAnonKey={publicSupabaseAnonKey} 
 
@@ -35,10 +35,12 @@ export default function AuthenticatedUserReservationsComponent({ allReservations
         <section className="py-28">
             <div className="w-full px-4 md:px-6 lg:px-8">
                 <div className="max-w-md">
-                    <h1 className="text-gray-800 text-2xl font-extrabold sm:text-4xl">All Reservations</h1>
-                    <p className="text-gray-600 mt-2">We're currently looking at different reservations.</p>
+                    <h1 className="text-gray-800 dark:text-gray-100 text-2xl font-extrabold sm:text-4xl">All Reservations</h1>
+                    <p className="text-gray-600 dark:text-gray-400 mt-2">Manage your event reservations.</p>
                 </div>
-                <ul className="mt-12 divide-y space-y-3">
+                
+                {allReservationsToDisplayHere && allReservationsToDisplayHere.length > 0 ? (
+                    <ul className="mt-12 divide-y space-y-3">
                     {
                         allReservationsToDisplayHere?.map((item: any, idx: any) => (
                             <li key={idx} className="px-4 py-5 duration-150 hover:border-white hover:rounded-xl hover:bg-gray-50" style={{ border: "0.5px solid #80808030", borderRadius: "0.5rem", color: "black" }}>
@@ -83,6 +85,17 @@ export default function AuthenticatedUserReservationsComponent({ allReservations
                         ))
                     }
                 </ul>
+                ) : (
+                    <div className="mt-12">
+                        <EmptyState 
+                            type="reservations"
+                            title="No Reservations Yet"
+                            description="You haven't made any reservations. Browse events to get started."
+                            actionLabel="Browse Events"
+                            onAction={() => window.location.href = '/events'}
+                        />
+                    </div>
+                )}
             </div>
         </section>
     )
