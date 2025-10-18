@@ -92,11 +92,11 @@ export default async function Index() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col" style={{ width: '-webkit-fill-available' }}>
             <NavigationBar navigation={navigation} user={user} />
             <AuthenticatedUserEventsSubNav />
             
-            <div className="flex-1">
+            <div className="flex-1" style={{ width: '-webkit-fill-available' }}>
                 <NavigationClientComponent allGomaPlaces={allGomaPlaces} allKinshasaPlaces={allKinshasaPlaces} />
                 <AuthenticatedUserEvents 
                     allEvents={allEvents} 

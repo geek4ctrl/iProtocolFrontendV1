@@ -64,7 +64,7 @@ export default function AuthenticatedUserEvents({ allEvents, user, userInformati
 
     return (
         <section className="bg-gray-50 dark:bg-gray-900">
-            <div className="w-full px-6 py-12 md:px-12 lg:px-16">
+            <div className="w-full px-4 py-12 md:px-6 lg:px-8">
                 {/* Header */}
                 <div className="mb-10">
                     <h1 className="text-gray-900 dark:text-gray-100 text-3xl font-bold sm:text-4xl mb-3">All Events</h1>

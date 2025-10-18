@@ -178,11 +178,11 @@ export default async function Index() {
         reservation={reservations} 
       />
 
-      <div className="w-full flex flex-col items-center">
+      <div className="w-full flex flex-col items-center" style={{ width: '-webkit-fill-available' }}>
         <NavigationBar navigation={navigation} user={user} />
 
         {user ? (
-          <div className="w-full">
+          <div className="w-full" style={{ width: '-webkit-fill-available' }}>
             {userProfile && userProfile.length > 0 ? (
               <AuthenticatedUserDashboard plans={plans} />
             ) : (

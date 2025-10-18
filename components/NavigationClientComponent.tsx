@@ -54,7 +54,7 @@ export function NavigationClientComponent({ allGomaPlaces, allKinshasaPlaces }: 
 
     return (
         <section className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-indigo-900/20 dark:to-purple-900/20" aria-label="Event Navigation Section">
-            <div className="w-full px-6 py-16 md:px-12 lg:px-16">
+            <div className="w-full px-4 py-16 md:px-6 lg:px-8">
                 <div className="space-y-4 mb-8 text-center">
                     <h1 className="text-gray-900 dark:text-white text-3xl font-bold sm:text-4xl">
                         Program of the Papal Visit

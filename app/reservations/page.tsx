@@ -49,16 +49,18 @@ export default async function Index() {
     }
 
     return (
-        <>
-            <div className="w-full flex flex-col items-center">
-
-                <NavigationBar navigation={navigation} user={user} />
-                <BackButton />
-                <AurhenticatedUserReservationsSubNav />
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col" style={{ width: '-webkit-fill-available' }}>
+            <NavigationBar navigation={navigation} user={user} />
+            <AurhenticatedUserReservationsSubNav />
+            
+            <div className="flex-1" style={{ width: '-webkit-fill-available' }}>
+                <AuthenticatedUserReservationsComponent 
+                    allReservations={allReservations} 
+                    user={user} 
+                    publicSupabaseUrl={publicSupabaseUrl} 
+                    publicSupabaseAnonKey={publicSupabaseAnonKey} 
+                />
             </div>
-
-            <AuthenticatedUserReservationsComponent allReservations={allReservations} user={user} publicSupabaseUrl={publicSupabaseUrl} publicSupabaseAnonKey={publicSupabaseAnonKey} />
-
-        </>
+        </div>
     );
 }

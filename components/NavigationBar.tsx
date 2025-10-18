@@ -17,7 +17,7 @@ export default function NavigationBar({ navigation, user }: NavigationBarProps) 
 
     return (
         <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 w-full transition-colors">
-            <div className="px-4 max-w-screen-xl mx-auto md:px-8">
+            <div className="w-full px-4 md:px-6 lg:px-8">
                 <div className="flex items-center justify-between py-3 md:py-5">
                     {/* Logo - Left side */}
                     <div className="flex-shrink-0">
