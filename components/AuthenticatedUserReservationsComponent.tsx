@@ -43,24 +43,19 @@ export default function AuthenticatedUserReservationsComponent({ allReservations
                     <ul className="mt-12 divide-y space-y-3">
                     {
                         allReservationsToDisplayHere?.map((item: any, idx: any) => (
-                            <li key={idx} className="px-4 py-5 duration-150 hover:border-white hover:rounded-xl hover:bg-gray-50" style={{ border: "0.5px solid #80808030", borderRadius: "0.5rem", color: "black" }}>
+                            <li key={idx} className="px-4 py-5 duration-150 hover:border-white hover:rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800" style={{ border: "0.5px solid #80808030", borderRadius: "0.5rem", color: "black" }}>
                                 <a className="space-y-3">
                                     <div className="flex items-center gap-x-6">
-                                        <img
-                                            src={item.userpicture}
-                                            width={100}
-                                            height={75}
-                                            alt="Float UI logo"
-                                            className="bg-white w-14 h-14 border rounded-full flex items-center justify-center"
-                                            style={{ borderRadius: "50%" }}
-                                        />
+                                        <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                                            {item.eventplace?.charAt(0)?.toUpperCase() || 'E'}
+                                        </div>
                                         <div>
-                                            <span className="block text-sm text-indigo-600 font-medium">{item.eventdate}</span>
-                                            <h3 className="text-base text-gray-800 font-semibold mt-1">{item.eventplace}</h3>
+                                            <span className="block text-sm text-indigo-600 dark:text-indigo-400 font-medium">{item.eventdate}</span>
+                                            <h3 className="text-base text-gray-800 dark:text-gray-100 font-semibold mt-1">{item.eventplace}</h3>
                                         </div>
                                     </div>
-                                    <p className="text-gray-600 sm:text-sm" style={{ padding: "0.5rem" }}>
-                                        {item.title}
+                                    <p className="text-gray-600 dark:text-gray-400 sm:text-sm" style={{ padding: "0.5rem" }}>
+                                        {item.eventtitle || item.title}
                                     </p>
 
                                     <div className="text-sm text-gray-600 flex items-center gap-6">
