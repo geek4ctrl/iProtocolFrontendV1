@@ -32,25 +32,28 @@ export default function AuthenticatedUserDashboardContent({ plans }: Authenticat
     }
 
     return (
-        <div className="mt-12">
-            <div className='grid gap-8 sm:grid-cols-2 lg:grid-cols-2 max-w-4xl mx-auto'>
+        <div className="mt-12 px-4">
+            <div className='grid gap-6 sm:grid-cols-1 lg:grid-cols-2 max-w-5xl mx-auto'>
                 {plans.map((item, idx) => (
                     <div 
                         key={idx} 
-                        className='group relative overflow-hidden rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-indigo-500 dark:hover:border-indigo-400 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/20'
+                        className='group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 hover:shadow-2xl hover:shadow-indigo-500/30 transition-all duration-500 hover:-translate-y-2 border border-gray-200/50 dark:border-gray-700/50'
                     >
-                        {/* Background Image with Overlay */}
-                        <div 
-                            className="absolute inset-0 bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity duration-300"
-                            style={{ backgroundImage: `url(${item.image})` }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-800/90 dark:to-gray-900/90" />
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 dark:from-indigo-500/10 dark:via-purple-500/10 dark:to-pink-500/10" />
+                        
+                        {/* Animated Background Pattern */}
+                        <div className="absolute inset-0 opacity-30 dark:opacity-20">
+                            <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 dark:bg-purple-700 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
+                            <div className="absolute bottom-0 -right-4 w-72 h-72 bg-indigo-300 dark:bg-indigo-700 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
+                        </div>
 
                         {/* Content */}
-                        <div className='relative p-8 flex flex-col h-full min-h-[280px]'>
-                            <div className="flex-1">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 mb-4 group-hover:scale-110 transition-transform duration-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className='relative p-8 flex flex-col h-full min-h-[320px]'>
+                            {/* Icon with Gradient Background */}
+                            <div className="mb-6">
+                                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/50 group-hover:shadow-xl group-hover:shadow-indigo-500/60 group-hover:scale-110 transition-all duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         {item.name === 'Invitation' ? (
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                         ) : (
@@ -58,37 +61,32 @@ export default function AuthenticatedUserDashboardContent({ plans }: Authenticat
                                         )}
                                     </svg>
                                 </div>
-                                <h3 className='text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3'>
+                            </div>
+
+                            {/* Title & Description */}
+                            <div className="flex-1">
+                                <h3 className='text-3xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300'>
                                     {item.name}
                                 </h3>
-                                <p className='text-gray-600 dark:text-gray-400 text-sm leading-relaxed'>
+                                <p className='text-gray-600 dark:text-gray-300 text-base leading-relaxed'>
                                     {item.name === 'Invitation' 
                                         ? 'Request access to exclusive events and ceremonies'
                                         : 'Get official accreditation for event participation'}
                                 </p>
                             </div>
 
-                            {/* Features List */}
-                            {item.features && item.features.length > 0 && (
-                                <ul className='mt-6 space-y-2'>
-                                    {item.features.slice(0, 3).map((feature: string, featureIdx: number) => (
-                                        <li key={featureIdx} className='flex items-center text-sm text-gray-600 dark:text-gray-400'>
-                                            <svg className="w-4 h-4 mr-2 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                            </svg>
-                                            {feature}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-
                             {/* Button */}
                             <div className="mt-8">
                                 <button 
                                     onClick={() => callAllFunctions(item.name)} 
-                                    className='w-full px-6 py-3 rounded-lg font-semibold text-sm duration-200 text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800'
+                                    className='w-full px-6 py-4 rounded-xl font-bold text-base bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/60 transform hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/50'
                                 >
-                                    Choose {item.name}
+                                    <span className="flex items-center justify-center gap-2">
+                                        Choose {item.name}
+                                        <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                        </svg>
+                                    </span>
                                 </button>
                             </div>
                         </div>
