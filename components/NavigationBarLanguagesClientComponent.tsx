@@ -9,12 +9,7 @@ interface NavigationItem {
     // Add more properties as needed
 }
 
-interface NavigationBarLanguagesClientComponentProps {
-    item: NavigationItem;
-    idx: number;
-}
-
-export default function NavigationBarLanguagesClientComponent({ item, idx }: { item: any, idx: any }) {
+export default function NavigationBarLanguagesClientComponent({ item }: { item: any }) {
 
     const notify = () => toast("Internationalization hasn't been applied");
 

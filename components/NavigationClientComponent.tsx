@@ -56,10 +56,10 @@ export function NavigationClientComponent({ allGomaPlaces, allKinshasaPlaces }: 
         <section className="py-28" style={{ background: "linear-gradient(152.92deg, rgba(192, 132, 252, 0.2) 4.54%, rgba(232, 121, 249, 0.17) 34.2%, rgba(192, 132, 252, 0.1) 77.55%)", width: "-webkit-fill-available" }} aria-label="Event Navigation Section">
             <div className="max-w-screen-xl mx-auto px-4 md:text-center md:px-8">
                 <div className="max-w-xl space-y-3 md:mx-auto">
-                    <p className="text-gray-800 dark:text-white text-3xl font-semibold sm:text-4xl" role="heading" aria-level="1">
+                    <h1 className="text-gray-800 dark:text-white text-3xl font-semibold sm:text-4xl">
                         Program of the papal visit
-                    </p>
-                    <p className="text-gray-600 dark:text-gray-200" role="note">
+                    </h1>
+                    <p className="text-gray-600 dark:text-gray-200">
                         Always arrive 2 hours before
                     </p>
                 </div>
