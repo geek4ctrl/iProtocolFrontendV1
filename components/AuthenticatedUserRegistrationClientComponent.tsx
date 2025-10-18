@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import supabase from "./SupabaseClient";
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -29,6 +29,9 @@ interface AuthenticatedUserRegistrationClientComponentProps {
 }
 
 export default function AuthenticatedUserRegistrationClientComponent({ userTitle, userDesignation, user, publicSupabaseUrl, publicSupabaseAnonKey }: { userTitle: any, userDesignation: any, user: any, publicSupabaseUrl: any, publicSupabaseAnonKey: any }) {
+
+    // Create auth-aware Supabase client
+    const supabase = createClientComponentClient()
 
     const [userId, setUserId] = useState(user?.id);
     const [media, setMedia] = useState([]);
@@ -67,8 +70,8 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
                 return
             }
 
+            // Don't send the ID - let the database auto-generate it
             const formDataToSend = {
-                id: userId,
                 title,
                 firstname,
                 surname,
@@ -78,6 +81,8 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
                 diocese,
             }
 
+            console.log('Attempting to register user:', { email, firstname, surname })
+
             const { data, error } = await supabase
                 .from('users')
                 .insert(formDataToSend)
@@ -85,13 +90,20 @@ export default function AuthenticatedUserRegistrationClientComponent({ userTitle
 
             if (error) {
                 console.error('Registration error:', error)
+                console.error('Error code:', error.code)
+                console.error('Error details:', error.details)
+                console.error('Error hint:', error.hint)
                 
                 if (error.code === "23505") {
                     setErrorToDisplay('You have already registered. This email is already in use.')
                 } else if (error.code === "42P01") {
                     setErrorToDisplay('Database table "users" does not exist. Please contact support.')
+                } else if (error.code === "42501") {
+                    setErrorToDisplay('Permission denied. Row-level security policy error. Please check your database policies.')
+                } else if (error.message.includes('row-level security')) {
+                    setErrorToDisplay(`Security Policy Error: ${error.message}. Please contact support or check the database setup.`)
                 } else {
-                    setErrorToDisplay(error.message || 'An error occurred during registration. Please try again.')
+                    setErrorToDisplay(`Error (${error.code}): ${error.message || 'An error occurred during registration. Please try again.'}`)
                 }
             } else {
                 setSuccessMessage('Registration successful! Redirecting...')
