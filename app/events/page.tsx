@@ -2,9 +2,10 @@ import AuthenticatedUserEvents from "@/components/AuthenticatedUserEvents";
 import AuthenticatedUserEventsSubNav from "@/components/AuthenticatedUserEventsSubNav";
 import NavigationBar from "@/components/NavigationBar";
 import { NavigationClientComponent } from "@/components/NavigationClientComponent";
+import FooterComponent from "@/components/FooterComponent";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import type { NavigationItem } from '@/types';
+import type { NavigationItem, FooterNavItem } from '@/types';
 
 interface Event {
     // Define the shape of an event
@@ -39,6 +40,13 @@ const navigation: NavigationItem[] = [
     { title: "Français", path: "#" },
     { title: "English", path: "#" },
     { title: "Italiano", path: "#" },
+];
+
+const footerNavs: FooterNavItem[] = [
+    { href: '/about', name: 'About' },
+    { href: '/events', name: 'Events' },
+    { href: '/contact', name: 'Contact' },
+    { href: '/support', name: 'Support' }
 ];
 
 let userInformation = {}
@@ -92,20 +100,24 @@ export default async function Index() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col" style={{ width: '-webkit-fill-available' }}>
-            <NavigationBar navigation={navigation} user={user} />
-            <AuthenticatedUserEventsSubNav />
-            
-            <div className="flex-1" style={{ width: '-webkit-fill-available' }}>
-                <NavigationClientComponent allGomaPlaces={allGomaPlaces} allKinshasaPlaces={allKinshasaPlaces} />
-                <AuthenticatedUserEvents 
-                    allEvents={allEvents} 
-                    user={user} 
-                    userInformation={userInformation} 
-                    publicSupabaseUrl={publicSupabaseUrl} 
-                    publicSupabaseAnonKey={publicSupabaseAnonKey} 
-                />
+        <>
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col" style={{ width: '-webkit-fill-available' }}>
+                <NavigationBar navigation={navigation} user={user} />
+                <AuthenticatedUserEventsSubNav />
+                
+                <div className="flex-1" style={{ width: '-webkit-fill-available' }}>
+                    <NavigationClientComponent allGomaPlaces={allGomaPlaces} allKinshasaPlaces={allKinshasaPlaces} />
+                    <AuthenticatedUserEvents 
+                        allEvents={allEvents} 
+                        user={user} 
+                        userInformation={userInformation} 
+                        publicSupabaseUrl={publicSupabaseUrl} 
+                        publicSupabaseAnonKey={publicSupabaseAnonKey} 
+                    />
+                </div>
             </div>
-        </div>
+            
+            <FooterComponent footerNavs={footerNavs} />
+        </>
     );
 }
