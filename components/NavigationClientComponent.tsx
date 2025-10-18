@@ -24,6 +24,7 @@ export function NavigationClientComponent({ allGomaPlaces, allKinshasaPlaces }: 
 
     const allPlaces = useStore((state) => state.place)
     const allEventsFromStore = useStore((state) => state.event)
+    const chosenReservationType = useStore((state) => state.chosenReservationType)
     const [originalEvents, setOriginalEvents] = useState<Event[]>([])
     const [selectedPlace, setSelectedPlace] = useState<string | null>(null)
 
@@ -62,6 +63,24 @@ export function NavigationClientComponent({ allGomaPlaces, allKinshasaPlaces }: 
                     <p className="text-gray-600 dark:text-gray-300 text-lg">
                         Always arrive 2 hours before the event
                     </p>
+                    
+                    {/* Reservation Type Badge */}
+                    {chosenReservationType && (
+                        <div className="flex justify-center mt-4">
+                            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/50">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    {chosenReservationType === 'Invitation' ? (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    ) : (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    )}
+                                </svg>
+                                <span className="font-semibold">
+                                    Reservation Type: {chosenReservationType}
+                                </span>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <nav className="flex gap-3 justify-center flex-wrap" aria-label="Event places navigation" role="navigation">
