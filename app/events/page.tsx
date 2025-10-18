@@ -1,6 +1,5 @@
 import AuthenticatedUserEvents from "@/components/AuthenticatedUserEvents";
 import AuthenticatedUserEventsSubNav from "@/components/AuthenticatedUserEventsSubNav";
-import BackButton from "@/components/BackButton";
 import NavigationBar from "@/components/NavigationBar";
 import { NavigationClientComponent } from "@/components/NavigationClientComponent";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -95,11 +94,17 @@ export default async function Index() {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
             <NavigationBar navigation={navigation} user={user} />
-            <div className="flex-1 w-full">
-                <BackButton />
-                <AuthenticatedUserEventsSubNav />
+            <AuthenticatedUserEventsSubNav />
+            
+            <div className="flex-1">
                 <NavigationClientComponent allGomaPlaces={allGomaPlaces} allKinshasaPlaces={allKinshasaPlaces} />
-                <AuthenticatedUserEvents allEvents={allEvents} user={user} userInformation={userInformation} publicSupabaseUrl={publicSupabaseUrl} publicSupabaseAnonKey={publicSupabaseAnonKey} />
+                <AuthenticatedUserEvents 
+                    allEvents={allEvents} 
+                    user={user} 
+                    userInformation={userInformation} 
+                    publicSupabaseUrl={publicSupabaseUrl} 
+                    publicSupabaseAnonKey={publicSupabaseAnonKey} 
+                />
             </div>
         </div>
     );

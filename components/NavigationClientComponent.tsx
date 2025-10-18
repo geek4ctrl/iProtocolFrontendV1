@@ -53,47 +53,52 @@ export function NavigationClientComponent({ allGomaPlaces, allKinshasaPlaces }: 
     }
 
     return (
-        <section className="py-28" style={{ background: "linear-gradient(152.92deg, rgba(192, 132, 252, 0.2) 4.54%, rgba(232, 121, 249, 0.17) 34.2%, rgba(192, 132, 252, 0.1) 77.55%)", width: "-webkit-fill-available" }} aria-label="Event Navigation Section">
-            <div className="max-w-screen-xl mx-auto px-4 md:text-center md:px-8">
-                <div className="max-w-xl space-y-3 md:mx-auto">
-                    <h1 className="text-gray-800 dark:text-white text-3xl font-semibold sm:text-4xl">
-                        Program of the papal visit
+        <section className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-indigo-900/20 dark:to-purple-900/20" aria-label="Event Navigation Section">
+            <div className="w-full px-6 py-16 md:px-12 lg:px-16">
+                <div className="space-y-4 mb-8 text-center">
+                    <h1 className="text-gray-900 dark:text-white text-3xl font-bold sm:text-4xl">
+                        Program of the Papal Visit
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-200">
-                        Always arrive 2 hours before
+                    <p className="text-gray-600 dark:text-gray-300 text-lg">
+                        Always arrive 2 hours before the event
                     </p>
                 </div>
 
-                <nav className="mt-4 flex gap-2 justify-center flex-wrap" style={{ cursor: "pointer" }} aria-label="Event places navigation" role="navigation">
-                    <div className="flex flex-col w-full gap-3 sm:flex-row sm:gap-2 sm:justify-center">
-                        <button 
-                            onClick={showAllEvents}
-                            className={`w-full sm:w-auto py-3 px-4 text-white font-medium duration-150 rounded-lg shadow-md hover:shadow-none focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
-                                selectedPlace === null ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-600 hover:bg-gray-700'
-                            }`}
-                            aria-current={selectedPlace === null ? 'page' : undefined}
-                            aria-label="Show all events"
-                            role="button"
-                        >
-                            All Events
-                        </button>
-                        {
-                            allPlaces?.map((items: any) => (
-                                <button 
-                                    key={items.place}
-                                    onClick={() => choosePlace(items.place)}
-                                    className={`w-full sm:w-auto py-3 px-4 text-white font-medium duration-150 rounded-lg shadow-md hover:shadow-none focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
-                                        selectedPlace === items.place ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-800 hover:bg-gray-700'
-                                    }`}
-                                    aria-current={selectedPlace === items.place ? 'page' : undefined}
-                                    aria-label={`Show events for ${items.place}`}
-                                    role="button"
-                                >
+                <nav className="flex gap-3 justify-center flex-wrap" aria-label="Event places navigation" role="navigation">
+                    <button 
+                        onClick={showAllEvents}
+                        className={`py-3 px-6 font-semibold text-sm duration-200 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all ${
+                            selectedPlace === null 
+                                ? 'bg-indigo-600 hover:bg-indigo-700 text-white focus:ring-indigo-500' 
+                                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-gray-400'
+                        }`}
+                        aria-current={selectedPlace === null ? 'page' : undefined}
+                        aria-label="Show all events"
+                    >
+                        All Events
+                    </button>
+                    {
+                        allPlaces?.map((items: any) => (
+                            <button 
+                                key={items.place}
+                                onClick={() => choosePlace(items.place)}
+                                className={`py-3 px-6 font-semibold text-sm duration-200 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all ${
+                                    selectedPlace === items.place 
+                                        ? 'bg-indigo-600 hover:bg-indigo-700 text-white focus:ring-indigo-500' 
+                                        : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-gray-400'
+                                }`}
+                                aria-current={selectedPlace === items.place ? 'page' : undefined}
+                                aria-label={`Show events for ${items.place}`}
+                            >
+                                <span className="flex items-center gap-2">
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" clipRule="evenodd" d="M5.05025 4.05025C7.78392 1.31658 12.2161 1.31658 14.9497 4.05025C17.6834 6.78392 17.6834 11.2161 14.9497 13.9497L10 18.8995L5.05025 13.9497C2.31658 11.2161 2.31658 6.78392 5.05025 4.05025ZM10 11C11.1046 11 12 10.1046 12 9C12 7.89543 11.1046 7 10 7C8.89543 7 8 7.89543 8 9C8 10.1046 8.89543 11 10 11Z" />
+                                    </svg>
                                     {items.place}
-                                </button>
-                            ))
-                        }
-                    </div>
+                                </span>
+                            </button>
+                        ))
+                    }
                 </nav>
 
             </div>
