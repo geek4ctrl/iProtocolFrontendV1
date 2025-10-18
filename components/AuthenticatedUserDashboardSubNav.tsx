@@ -22,8 +22,8 @@ export default function AuthenticatedUserDashboardSubNav() {
     const pathname = usePathname()
 
     return (
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-            <div className="w-full px-4 md:px-6 lg:px-8">
+        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 w-screen">
+            <div className="w-full max-w-full mx-auto px-4 md:px-6 lg:px-8">
                 <ul className="flex items-center gap-x-3 overflow-x-auto">
                     {subNavigation.map((item, idx) => {
                         const isActive = pathname === item.href
